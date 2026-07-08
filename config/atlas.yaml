@@ -1,0 +1,20 @@
+project:
+  name: StretchSense Knowledge Base
+
+source:
+  platform: helpscout
+
+output:
+  markdown: true
+  html: true
+  zoho: true
+
+publishers:
+  zoho:
+    output: knowledge_base/output/zoho_import
+
+  markdown:
+    output: knowledge_base/output/markdown
+
+branding:
+  company: StretchSense
