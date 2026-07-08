@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Unity & Tundra Trackers - Guide for Set Up with Hand Engine",
+  "summary": "This knowledgebase article will show you how to setup your Tundra Trackers to track the position and rotation of StretchSense Studio gloves in space. Tundra Trackers provide a good balance between tracking accuracy, physical footprint and battery life compared with other SteamVR compatible trackers.",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Unity-Tundra-Trackers-Guide-for-Set-Up-with-Hand-Engine?language=en_US",
+  "slug": "Unity-Tundra-Trackers-Guide-for-Set-Up-with-Hand-Engine",
+  "package_folder": "knowledge_base/output/packages/Unity-Tundra-Trackers-Guide-for-Set-Up-with-Hand-Engine",
+  "image_count": 31,
+  "failed_images": [],
+  "status": "packaged"
+}

@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Unreal Engine & Vive Trackers - Guide for Set Up with Hand Engine",
+  "summary": "This document should take you through the steps of how to integrate MoCap gloves with Vive trackers in Unreal Engine.",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Unreal-Engine-Vive-Trackers-Comprehensive-Guide-for-Set-Up-with-Hand-Engine?language=en_US",
+  "slug": "Unreal-Engine-Vive-Trackers-Guide-for-Set-Up-with-Hand-Engine",
+  "package_folder": "knowledge_base/output/packages/Unreal-Engine-Vive-Trackers-Guide-for-Set-Up-with-Hand-Engine",
+  "image_count": 29,
+  "failed_images": [],
+  "status": "packaged"
+}

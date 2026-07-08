@@ -1,0 +1,16 @@
+Requirements:
+ 
+Your hand Engine license key, which can be obtained from your account on StretchSense Downloads.  If you do not already have an account or your license key is not in your account you can contact our Support team at support@stretchsense.com.
+
+Manual Activation
+Click on the manual activation option, paste your license key, and click on 'Save Activation Request'. 
+Hand Engine will generate an .XML file, which will need to be sent to our Support team at support@stretchsense.com, and then we will send you back an Activation Response .XML file. 
+NOTE:
+Ensure that you compress the file into a ZIP format before sending it to our Support team. This is important because plain .XML attachments can be blocked by email servers.
+Go back to Hand Engine and click on 'Set Activation Response' to load the file provided by our Support team, then click on Activate. 
+
+NOTE:
+The .XML file used for activation contains credentials specific to the machine where the request was generated.
+If you want to activate the license on a different machine, you will have to generate a new .XML file and send it to the StretchSense Support team for processing.
+ 
+ 

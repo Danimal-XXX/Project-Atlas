@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Firmware Update (Fidelity and SuperSplay Gloves)",
+  "summary": "Instructions on how to update your glove firmware via the nRF Connect App",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Legacy-Glove-and-Dongle-Firmware-Update-Guide-Desktop?language=en_US",
+  "slug": "Firmware-Update-Fidelity-and-SuperSplay-Gloves",
+  "package_folder": "knowledge_base/output/packages/Firmware-Update-Fidelity-and-SuperSplay-Gloves",
+  "image_count": 23,
+  "failed_images": [],
+  "status": "packaged"
+}

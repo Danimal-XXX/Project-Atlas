@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Fidelity & SuperSplay Gloves - Unreal Engine Streaming",
+  "summary": "This document will take you through the steps of connecting to Unreal Engine with Hand Engine using the Fidelity and SuperSplay gloves.",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Fidelity-and-SuperSplay-Glove-Unreal-Engine-Streaming?language=en_US",
+  "slug": "Fidelity-SuperSplay-Gloves-Unreal-Engine-Streaming",
+  "package_folder": "knowledge_base/output/packages/Fidelity-SuperSplay-Gloves-Unreal-Engine-Streaming",
+  "image_count": 29,
+  "failed_images": [],
+  "status": "packaged"
+}

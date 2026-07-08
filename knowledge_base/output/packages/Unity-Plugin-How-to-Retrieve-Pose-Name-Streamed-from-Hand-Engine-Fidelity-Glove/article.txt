@@ -1,0 +1,26 @@
+Requirements
+
+StretchSense Hand Engine software
+
+Unity 2020 LTS or later installed
+
+StretchSense Unity Plugin: Download the most up-to-date Plugins from the Downloads Section of your StretchSense Account at http://www.stretchsense.com/my-account
+
+Setup the streaming link from Hand Engine to Unity: https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Fidelity-and-SuperSplay-Glove-Unity-Streaming 
+
+Operating System: Windows 10 or later
+
+
+Pose Name information streamed to Unity
+
+1- Once the streaming from Hand Engine to Unity has been set up, trigger the Play Mode and check the Hand Engine Client script.
+
+2- The script will update to the current active pose:
+
+
+Pose Name: This field will display the pose name currently recognized via the plugin, this does not mean that it is the key pose that is active, it just displays the name from the closest key pose the user is performing. 
+Pose ID: The Pose ID field levels the key poses set in Hand Engine with IDs starting from zero (0).
+Pose Active: The Pose active field works as a confirmation of whether the key pose set in Hand Engine has been fully reached
+Pose Conf: This field refers to the confidence level the performer's hand has reached the key pose, it ranges from zero (0) to one (1).
+
+TIP:  You can set up conditional scripts to perform actions based on any of the values from these fields. 

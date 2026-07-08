@@ -1,0 +1,145 @@
+Requirements
+StretchSense Hand Engine: Login to your account page at http://www.stretchsense.com/my-account  or email support@stretchsense.com for your license details.
+Unity
+Unity - Hand Engine Plugin
+Download the most up-to-date Plugins from the Downloads Section of your StretchSense Account at stretchsense.com/my-account/
+ 
+1. Set Up the Remap Tool in Hand Engine
+
+
+Remapping is assigning the bones of the hand asset within Hand Engine to drive the correct bones on the asset you are streaming hand data onto in another software. 
+
+
+IMPORTANT: This task will need to be completed prior to streaming hands to Unity using the Fidelity glove.
+
+ 
+
+Set up the T-Pose of your rigs FBX
+
+
+In order to remap the Hand Engine output to your custom character, you must first create an FBX that has just your target character in it and that character is in a full T-Pose that is saved at the first frame in the FBX.
+
+
+The character must be in a full T-pose, with each hand in an L-Pose. The fingers of the character should align with a major axis of the scene/FBX.
+
+
+Please note this FBX is used only for extracting bone hierarchy and rotation order data from your character. Once the remapping process is complete, you will be able to stream data from Hand Engine to any FBX/scene containing that character.
+The key features for each hand pose are:
+
+The palm is facing down and is parallel to the ground plane
+The fingers are pointing straight out and are parallel both to each other and to the ground plane, and are aligned with a major axis of the scene/FBX e.g. the X-axis in the screenshots below.
+The thumb should be pointing straight ahead, perpendicular to the fingers, and parallel to the ground plane. It should be aligned with one of the other major axes of the scene/FBX, such as the Z-axis in the provided screenshots. Additionally, the thumbnail should be facing towards the body, which means it should be pointing in the opposite direction to which the fingers are pointing.
+
+NOTE: The Hand Engine hand asset is set up using the metric system. Please ensure that your target FBX is set up with the same measurement system (working units in centimeters) to the software you are streaming.
+
+ 
+
+Example of correct bind L-Pose
+
+ 
+ 
+
+Common Mistakes
+The thumb is in a relaxed position. This will cause the thumb to be tucked in too close to the hand
+
+
+ 
+
+Fingers are curled/in a relaxed position. This will cause the fingers to be over-rotated then creating a fist.
+
+ 
+
+Fingers and thumb are correctly set, but the hand/arm is rotated relative to the major axis of the global scene. This will cause off-axis rotations of the fingers/thumb when curling them.
+
+ 
+
+Creating a remap profile in Hand Engine
+Open the remapping tool by going to Tools -> Remapping
+
+Select the character FBX you have set up as per the above instructions:
+
+Once the file has been selected, please select the root of the left hand from the left drop-down menu(1), or you can use a previously saved Remap profile(2). 
+
+Hand Engine will detect the remainder of the bones on the hand hierarchy and list them below. 
+
+
+This is how the Hand Engine asset is mapped. Please use this as a guide for assigning the bones of your asset to the bones of the hand in Hand Engine:
+
+
+ 
+The right-hand column contains the hand bones of the asset within Hand Engine. Please select the associated bone to match your character's hand bones from this list. 
+
+Once this has been completed, you can adjust the save name of this mapping at the top right-hand side:
+
+To save this remapping, click on submit at the bottom of this window:
+
+
+If you need to make any adjustments to this remapping, you can make the changes and click update at the bottom. It will overwrite the previous saved remap:
+
+ 
+
+Assigning remap profile to a hand
+Please connect gloves and perform a calibration
+Click on Remapping Target in the hand setup box, and select your recently added remap. Make sure to add it for each hand.
+
+Once this has been done for each hand, the hands are now ready to stream outside of Hand Engine to your software of choice. 
+NOTE: If you have created or updated a remapping profile, after selecting the remapping target for each hand, please turn the TCP stream OFF and then ON again to make sure the new remapped stream is active. 
+ 
+2. Setting up your Unity
+
+Download and Install Unity
+
+NOTE: In this guide, we are using the Unity version 2022.3.7f1
+
+Launch Unity Hub and create a new project
+
+Select the 3D option from the templates window, then click Create
+
+Once your project is created we will bring in the Hand Engine Plugin by right-clicking in the Project Assets Directory and selecting > Import Package > CustomPackage
+
+ 
+
+Select the HandEngineUnity_01.00.XX.unitypackage
+ 
+
+NOTE: The most up-to-date Unity package can be found in the Plugins folder you downloaded from your StretchSense account.
+
+
+When prompted import all of the elements in the package
+
+NOTE: this will replace the default SampleScene
+
+
+Import your custom character into your project and drop it in the scene
+
+In the Hierarchy tab, expand your rig asset until you find the root bone asset of each hand. 
+
+Once you have clicked on the hand asset, go to the inspector view and click on 'Add Component', then click on 'Hand Engine Client'.
+
+ 
+
+check the Host and Port settings match what you set in Hand Engine. You will have to check this for both hands.
+ 
+
+NOTE: The default value for Host is 127.0.0.1 = localhost, i.e. you are running Hand Engine on the same PC that you are running Unity. If you have bound Hand Engine to a different IP address (e.g. if you are running Hand Engine and Unity on different computers on the same LAN), use this IP address instead for Host.
+ 
+
+
+Please note: If you have calibrated the gloves via Advanced Calibration with keyed poses then the following fields will be populated:
+ 
+
+Pose Name (pose being detected in Key Pose)
+
+Pose ID (count from 0 increments for each different pose in order of when it was captured)
+
+Note: Poses with the same name will have identical PoseID
+
+Active state (Is snap activated/has pose passed threshold)
+
+Pose confidence score (score of prediction)
+
+In the 'Hand' field, you will have to click the hand asset from the Hierarchy tab into it.
+Press the Connect check box once to make the hand asset in Unity connect to the data stream coming from Hand Engine, and the connected hand will start moving when you go into Play mode
+NOTE: This check box will clear itself immediately and the connected hand will start moving.
+
+You can now use the hand controlled by your StretchSense MoCap Pro Glove in your Unity Project.

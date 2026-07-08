@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Studio Glove - Unreal Engine 5 Streaming from Hand Engine via SDK",
+  "summary": "This guide will show how to set up the streaming from Hand Engine into Unreal Engine using the Studio glove",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Studio-Glove-Unreal-Engine-5-Streaming-from-Hand-Engine?language=en_US",
+  "slug": "Studio-Glove-Unreal-Engine-5-Streaming-from-Hand-Engine-via-SDK",
+  "package_folder": "knowledge_base/output/packages/Studio-Glove-Unreal-Engine-5-Streaming-from-Hand-Engine-via-SDK",
+  "image_count": 26,
+  "failed_images": [],
+  "status": "packaged"
+}

@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Recording data in Hand Engine",
+  "summary": "This guide will show you how to record hand data in Hand Engine and what files are generated for each take.",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Recording-data-in-Hand-Engine?language=en_US",
+  "slug": "Recording-data-in-Hand-Engine",
+  "package_folder": "knowledge_base/output/packages/Recording-data-in-Hand-Engine",
+  "image_count": 9,
+  "failed_images": [],
+  "status": "packaged"
+}

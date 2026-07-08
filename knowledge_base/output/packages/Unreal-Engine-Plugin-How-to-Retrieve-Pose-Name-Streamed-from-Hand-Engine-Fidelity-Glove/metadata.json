@@ -1,0 +1,12 @@
+{
+  "project": "Project Atlas",
+  "source_system": "Salesforce Knowledge",
+  "title": "Unreal Engine Plugin - How to Retrieve Pose Name Streamed from Hand Engine (Fidelity Glove)",
+  "summary": "This document will take you through the steps of retrieving the pose name in Unreal Engine using the getPose blueprint node when streaming from Hand Engine using the Fidelity Glove.",
+  "source_url": "https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/article/Unreal-Engine-Plugin-How-to-Retrieve-Pose-Name-streamed-from-Hand-Engine?language=en_US",
+  "slug": "Unreal-Engine-Plugin-How-to-Retrieve-Pose-Name-Streamed-from-Hand-Engine-Fidelity-Glove",
+  "package_folder": "knowledge_base/output/packages/Unreal-Engine-Plugin-How-to-Retrieve-Pose-Name-Streamed-from-Hand-Engine-Fidelity-Glove",
+  "image_count": 8,
+  "failed_images": [],
+  "status": "packaged"
+}
