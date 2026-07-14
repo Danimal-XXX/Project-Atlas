@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .DS_Store
 knowledge_base/output/
+.atlas_browser_session/
+output/
+# Atlas-generated outputs and downloaded assets
+output/
+archive/
+workspace/
+
+# WordPress software downloads
+output/wordpress/software_downloads/
