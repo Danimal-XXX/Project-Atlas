@@ -24,3 +24,21 @@ The Librarian
 
 v1.0.0
 Atlas Complete
+
+## Completed
+
+- HelpScout knowledge base crawler
+- HTML → Markdown transformation
+- Zoho article packaging
+- WordPress download catalogue discovery
+- Authenticated software download preservation
+- GitHub repository established
+
+## Next
+
+- WordPress Media Library preservation
+- Duplicate asset detection
+- Knowledge Base publisher for Zoho
+- SharePoint/OneDrive connector
+- Company Wiki generator
+- Atlas Core framework

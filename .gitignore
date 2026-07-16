@@ -5,8 +5,6 @@ __pycache__/
 knowledge_base/output/
 .atlas_browser_session/
 output/
-# Atlas-generated outputs and downloaded assets
-output/
 archive/
 workspace/
 
