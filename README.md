@@ -1,6 +1,8 @@
 Project Atlas
 Version: 0.1.0 (Foundation)
 
+Project Atlas transforms organisational knowledge into portable, reusable, and publishable assets. Crawl once. Publish anywhere.
+
 # Project Atlas
 
 > Every piece of knowledge should exist only once.
