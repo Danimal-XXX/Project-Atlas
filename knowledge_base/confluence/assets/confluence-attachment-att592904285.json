@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904285",
+  "filename": "Studio-Glove-TundraTracker-Mount-Plate-V2-vert.stl",
+  "media_type": "application/octet-stream",
+  "size_bytes": 2602984,
+  "sha256": "4aa7b9f30cf83ccc5190177ad3041af0ab81157f54e55ee65e2f4784cef6074c",
+  "local_path": "pages/592904194/attachments/att592904285-Studio-Glove-TundraTracker-Mount-Plate-V2-vert.stl",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904285",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904285%2FStudio-Glove-TundraTracker-Mount-Plate-V2-vert.stl"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

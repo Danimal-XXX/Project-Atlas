@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att792985684",
+  "filename": "Family-Page-Banner-scaled.jpg",
+  "media_type": "image/jpeg",
+  "size_bytes": 91868,
+  "sha256": "0a182dec73ee1e7a40c83ba7737de2bd368c791ab279ff8e0afee1308cfe7256",
+  "local_path": "pages/504561680/attachments/att792985684-Family-Page-Banner-scaled.jpg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att792985684",
+    "container_external_id": "504561680",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=504561680&preview=%2F504561680%2F792985684%2FFamily-Page-Banner-scaled.jpg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

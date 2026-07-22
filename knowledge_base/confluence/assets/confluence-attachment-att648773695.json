@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att648773695",
+  "filename": "61xRfpa-29L._AC_SX679_.jpg",
+  "media_type": "image/jpeg",
+  "size_bytes": 52999,
+  "sha256": "51acbc82b2cea628c9e9c530e229a599b7ad474c007ec1567316b396a528d7af",
+  "local_path": "pages/648740868/attachments/att648773695-61xRfpa-29L._AC_SX679_.jpg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att648773695",
+    "container_external_id": "648740868",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=648740868&preview=%2F648740868%2F648773695%2F61xRfpa-29L._AC_SX679_.jpg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904303",
+  "filename": "StretchSense VIVE Ultimate Tracker Mount-external-hooks.stl",
+  "media_type": "application/octet-stream",
+  "size_bytes": 805584,
+  "sha256": "75c643a428f2fccda3f75f242966c8b3c707c5b408e8dfaf25556b3034f24b10",
+  "local_path": "pages/592904194/attachments/att592904303-StretchSense VIVE Ultimate Tracker Mount-external-hooks.stl",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904303",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904303%2FStretchSense+VIVE+Ultimate+Tracker+Mount-external-hooks.stl"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

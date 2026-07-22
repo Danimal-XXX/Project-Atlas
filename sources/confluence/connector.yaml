@@ -1,0 +1,27 @@
+name: Confluence
+version: "1.0"
+type: source
+supports:
+  - discover
+  - mirror
+  - inventory
+  - package
+modules:
+  discover: discover.py
+  mirror: mirror.py
+  inventory: inventory.py
+  package: package.py
+outputs:
+  staging:
+    path: staging/confluence
+  inventory:
+    path: inventory/confluence/pages.csv
+  package:
+    path: knowledge_base
+    schema: knowledge.schema.json
+capabilities:
+  attachments: true
+  images: true
+  videos: true
+  permissions: true
+  revisions: true

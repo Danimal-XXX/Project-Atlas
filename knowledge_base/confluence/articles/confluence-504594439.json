@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-504594439",
+  "title": "Studio Glove - SteamVR & XR",
+  "slug": "studio-glove-steamvr-xr",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "|  |  |  |\n| --- | --- | --- |\n| [**Hand Engine Release Notes**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVZGA2/hand-engine-release-notes)![image-20240821-030821.png](atlas-asset://confluence-attachment-att504987668) | [**Quick Start Videos**](https://stretchsense.com/training-videos/%C2%A0)![image-20240821-030838.png](atlas-asset://confluence-attachment-att504987674) | [**Hand Engine Licence Setup**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVcGAM)![image-20240821-030845.png](atlas-asset://confluence-attachment-att504987680) |\n| [**Glove Setup and Calibration**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TOJ4000000PDRvOAO)![image-20240821-030851.png](atlas-asset://confluence-attachment-att504987686) | [**Streaming Hand Data**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVeGAM)![image-20240821-030857.png](atlas-asset://confluence-attachment-att504987692) | [**Record & Retarget in Post**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVgGAM)![image-20240821-030903.png](atlas-asset://confluence-attachment-att504987698) |\n| [SteamVR & XR](atlas-knowledge://confluence-504594439)![image-20240821-031252.png](atlas-asset://confluence-attachment-att504987704) |  | [Open SDK](atlas-knowledge://confluence-504561680)![image-20240821-030918.png](atlas-asset://confluence-attachment-att504987710) |\n\n# Documentation & Guides\n\nKnowledgebase articles covering how to use StretchSense Studio Gloves in SteamVR and XR.\n\n- [StretchSense SteamVR App Setup Guide (Open Beta)](atlas-knowledge://confluence-509640804) [Status: Get started here]\n- [OpenGloves Configuration Guide](atlas-knowledge://confluence-509903268) [Status: using third party mounts?]\n\n## [StretchSense SteamVR Controller Bindings Guide](atlas-knowledge://confluence-509247712)\n\n### [VRChat Guide](atlas-knowledge://confluence-509247722)\n\n<https://store.steampowered.com/app/438100/VRChat/>\n\n### [Boneworks Guide](atlas-knowledge://confluence-509804865)\n\n<https://store.steampowered.com/app/823500/BONEWORKS/>\n\n### [Minecraft Guide](atlas-knowledge://confluence-510034021)\n\n<https://www.vivecraft.org/>\n> INFO: Watch this space!\n> Additional articles and guides are coming soon during the Open Beta release of the StretchSense SteamVR App.\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "504594439",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/pages/504594439/Studio+Glove+-+SteamVR+XR",
+    "space": "431226936",
+    "parent_external_id": "431226993",
+    "revision": 9
+  },
+  "timestamps": {
+    "created_at": "2024-08-21T02:40:29.534+00:00",
+    "updated_at": "2025-06-24T05:08:49.567+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [
+    "confluence-attachment-att504987668",
+    "confluence-attachment-att504987674",
+    "confluence-attachment-att504987680",
+    "confluence-attachment-att504987686",
+    "confluence-attachment-att504987692",
+    "confluence-attachment-att504987698",
+    "confluence-attachment-att504987704",
+    "confluence-attachment-att504987710",
+    "confluence-attachment-att792920446",
+    "confluence-attachment-att813367307"
+  ],
+  "relationships": [
+    {
+      "type": "parent",
+      "target_id": "confluence-431226993"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-509247712"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-509640804"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-509903268"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-550371336"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-557645826"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-574488598"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-592904194"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-648740868"
+    }
+  ],
+  "checksums": {
+    "source": "5c6927f4820201e144bda8877ebd3e623c84886abced17fba1cfb3f75b865583",
+    "content": "30ac15311117d34f44d0f7b2e6bbe56cff7a091dfce2e7c44ad968b3ca106917"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "owner_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "position": 1386,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

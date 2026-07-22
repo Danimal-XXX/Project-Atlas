@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att509280620",
+  "filename": "d-idle.png",
+  "media_type": "image/png",
+  "size_bytes": 4624779,
+  "sha256": "126596c6e98784bceaec132616326ee0e23ca074909d8c70b6439f1e9b54479a",
+  "local_path": "pages/509640804/attachments/att509280620-d-idle.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att509280620",
+    "container_external_id": "509640804",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509640804&preview=%2F509640804%2F509280620%2Fd-idle.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 5,
+      "comment": ""
+    }
+  }
+}

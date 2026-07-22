@@ -1,0 +1,5 @@
+name: HelpScout
+version: "0.1"
+type: source
+supports: []
+entrypoint: package.py

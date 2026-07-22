@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att550469683",
+  "filename": "vive-wireless-dongle-800.jpg",
+  "media_type": "image/jpeg",
+  "size_bytes": 18530,
+  "sha256": "3b2615590d8d3f3241335ef4a40cfa872ada7874a9c3b8891048fc04be7d5c9c",
+  "local_path": "pages/550371336/attachments/att550469683-vive-wireless-dongle-800.jpg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att550469683",
+    "container_external_id": "550371336",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=550371336&preview=%2F550371336%2F550469683%2Fvive-wireless-dongle-800.jpg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

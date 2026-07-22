@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att557809790",
+  "filename": "LinYuvo-Meteor-Light-Key-Chain-Sized-Mini-Wireless-Controller-for-Switch-Lite-OLED-PC-Android-MacOS.jpg_.png",
+  "media_type": "image/png",
+  "size_bytes": 3865493,
+  "sha256": "27e2ede5e4c9fca3e180111534748f03fa70304f0c50332936eac8ef07541664",
+  "local_path": "pages/557645826/attachments/att557809790-LinYuvo-Meteor-Light-Key-Chain-Sized-Mini-Wireless-Controller-for-Switch-Lite-OLED-PC-Android-MacOS.jpg_.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att557809790",
+    "container_external_id": "557645826",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=557645826&preview=%2F557645826%2F557809790%2FLinYuvo-Meteor-Light-Key-Chain-Sized-Mini-Wireless-Controller-for-Switch-Lite-OLED-PC-Android-MacOS.jpg_.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

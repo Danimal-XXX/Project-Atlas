@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att557809730",
+  "filename": "Mocute-Bluetooth-Remote-Controller-051-Phone-Controller-Self-Timer-Shutter-Gamepad-Wireless-Mouse-For-Smartphones.jpg_.png",
+  "media_type": "image/png",
+  "size_bytes": 133197,
+  "sha256": "ab0d1154717b423d48ea156896935ad089e167604ce8371ed42226204bb53b9b",
+  "local_path": "pages/557645826/attachments/att557809730-Mocute-Bluetooth-Remote-Controller-051-Phone-Controller-Self-Timer-Shutter-Gamepad-Wireless-Mouse-For-Smartphones.jpg_.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att557809730",
+    "container_external_id": "557645826",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=557645826&preview=%2F557645826%2F557809730%2FMocute-Bluetooth-Remote-Controller-051-Phone-Controller-Self-Timer-Shutter-Gamepad-Wireless-Mouse-For-Smartphones.jpg_.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

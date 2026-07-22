@@ -1,0 +1,5 @@
+name: WordPress
+version: "0.1"
+type: source
+supports: []
+entrypoint: downloads/package.py

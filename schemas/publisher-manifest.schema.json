@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-atlas.local/schemas/publisher-manifest.schema.json",
+  "title": "Atlas Publisher Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "publisher", "generated_at", "source_connector", "article_count", "asset_count", "articles", "assets", "issues"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "publisher": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "source_connector": {"type": "string", "minLength": 1},
+    "article_count": {"type": "integer", "minimum": 0},
+    "asset_count": {"type": "integer", "minimum": 0},
+    "articles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "path", "sha256"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "path", "sha256", "size_bytes"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "size_bytes": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "issues": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,88 +1,98 @@
-from dotenv import load_dotenv
-import os
-import requests
+"""Discover the Confluence page tree selected for ingestion."""
 
-load_dotenv()
+from __future__ import annotations
 
-BASE_URL = os.getenv("ATLASSIAN_BASE_URL")
-EMAIL = os.getenv("ATLASSIAN_EMAIL")
-TOKEN = os.getenv("ATLASSIAN_API_TOKEN")
-HOMEPAGE_ID = os.getenv("CONFLUENCE_HOMEPAGE_ID")
+from datetime import datetime, timezone
+from typing import Any
 
-required_values = {
-    "ATLASSIAN_BASE_URL": BASE_URL,
-    "ATLASSIAN_EMAIL": EMAIL,
-    "ATLASSIAN_API_TOKEN": TOKEN,
-    "CONFLUENCE_HOMEPAGE_ID": HOMEPAGE_ID,
-}
+from sources.confluence.client import ConfluenceClient, ConfluenceConfig
 
-missing = [
-    name
-    for name, value in required_values.items()
-    if not value
-]
 
-if missing:
-    raise RuntimeError(
-        "Missing environment values: "
-        + ", ".join(missing)
+class ConfluenceDiscoveryError(RuntimeError):
+    """Raised when a requested page tree cannot be discovered safely."""
+
+
+def discover(
+    *,
+    root_page_id: str | None = None,
+    space_id: str | None = None,
+    client: ConfluenceClient | None = None,
+    max_pages: int | None = None,
+) -> dict[str, Any]:
+    """Return accessible pages belonging to the selected root's descendant tree."""
+    api = client or ConfluenceClient(
+        ConfluenceConfig.from_env(root_page_id=root_page_id, space_id=space_id)
     )
+    selected_root = root_page_id or api.config.root_page_id
+    if not selected_root:
+        raise ConfluenceDiscoveryError(
+            "A root page ID is required via root_page_id or CONFLUENCE_HOMEPAGE_ID"
+        )
+    root = api.get_page(str(selected_root))
+    selected_space = space_id or api.config.space_id or root.get("spaceId")
+    if not selected_space:
+        raise ConfluenceDiscoveryError(
+            f"Could not determine a space ID for root page {selected_root}"
+        )
+    pages_by_id = {str(page["id"]): page for page in api.iter_pages(str(selected_space))}
+    pages_by_id[str(root["id"])] = {**pages_by_id.get(str(root["id"]), {}), **root}
+    scoped = [
+        page
+        for page in pages_by_id.values()
+        if _belongs_to_tree(str(page["id"]), str(selected_root), pages_by_id)
+    ]
+    scoped.sort(key=lambda page: _sort_key(page, str(selected_root), pages_by_id))
+    link_targets = {
+        str(page.get("title") or ""): api.absolute_url(str(page.get("_links", {}).get("webui") or ""))
+        for page in pages_by_id.values()
+        if page.get("title") and page.get("_links", {}).get("webui")
+    }
+    if max_pages is not None:
+        scoped = scoped[: max(0, max_pages)]
+    return {
+        "connector": "confluence",
+        "root_page_id": str(selected_root),
+        "space_id": str(selected_space),
+        "base_url": api.config.base_url,
+        "discovered_at": datetime.now(timezone.utc).isoformat(),
+        "page_count": len(scoped),
+        "pages": scoped,
+        "link_targets": link_targets,
+    }
 
-session = requests.Session()
-session.auth = (EMAIL, TOKEN)
-session.headers.update({
-    "Accept": "application/json"
-})
 
-page_url = (
-    f"{BASE_URL}/wiki/api/v2/pages/"
-    f"{HOMEPAGE_ID}"
-)
+def _belongs_to_tree(
+    page_id: str, root_page_id: str, pages_by_id: dict[str, dict[str, Any]]
+) -> bool:
+    current: str | None = page_id
+    visited: set[str] = set()
+    while current and current not in visited:
+        if current == root_page_id:
+            return True
+        visited.add(current)
+        page = pages_by_id.get(current)
+        current = str(page.get("parentId")) if page and page.get("parentId") else None
+    return False
 
-response = session.get(
-    page_url,
-    timeout=30,
-)
 
-print(f"HTTP Status: {response.status_code}")
-
-if not response.ok:
-    print(response.text)
-    response.raise_for_status()
-
-page = response.json()
-
-print("\nHomepage details:")
-print(f"Page ID:   {page.get('id')}")
-print(f"Title:     {page.get('title')}")
-print(f"Space ID:  {page.get('spaceId')}")
-print(f"Parent ID: {page.get('parentId')}")
-print(f"Status:    {page.get('status')}")
-
-space_id = page.get("spaceId")
-
-if space_id:
-    space_url = (
-        f"{BASE_URL}/wiki/api/v2/spaces/"
-        f"{space_id}"
+def _sort_key(
+    page: dict[str, Any], root_page_id: str, pages_by_id: dict[str, dict[str, Any]]
+) -> tuple[int, tuple[str, ...], int, str]:
+    lineage = []
+    current = str(page["id"])
+    visited: set[str] = set()
+    while current != root_page_id and current not in visited:
+        visited.add(current)
+        current_page = pages_by_id.get(current, {})
+        lineage.append(str(current_page.get("title", "")).casefold())
+        parent = current_page.get("parentId")
+        if not parent:
+            break
+        current = str(parent)
+    lineage.reverse()
+    return (
+        len(lineage),
+        tuple(lineage),
+        int(page.get("position") or 0),
+        str(page.get("id")),
     )
-
-    space_response = session.get(
-        space_url,
-        timeout=30,
-    )
-
-    print(
-        f"\nSpace lookup status: "
-        f"{space_response.status_code}"
-    )
-
-    if space_response.ok:
-        space = space_response.json()
-
-        print("\nConfirmed space:")
-        print(f"Space ID: {space.get('id')}")
-        print(f"Key:      {space.get('key')}")
-        print(f"Name:     {space.get('name')}")
-    else:
-        print(space_response.text)

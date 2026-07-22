@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904255",
+  "filename": "Screenshot 2024-10-09 160919.png",
+  "media_type": "image/png",
+  "size_bytes": 61139,
+  "sha256": "376bf8349af7eeb41f8c58203c0d3a4de1082356372b8c2b048b97960ec65401",
+  "local_path": "pages/592904194/attachments/att592904255-Screenshot 2024-10-09 160919.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904255",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904255%2FScreenshot+2024-10-09+160919.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

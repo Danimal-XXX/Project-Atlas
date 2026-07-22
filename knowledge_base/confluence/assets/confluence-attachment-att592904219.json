@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904219",
+  "filename": "vive-tracker.png",
+  "media_type": "image/png",
+  "size_bytes": 511918,
+  "sha256": "19b87251f86893cf14aa8d126132b99edf4cae44f827231a12ed9e5db937f57e",
+  "local_path": "pages/592904194/attachments/att592904219-vive-tracker.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904219",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904219%2Fvive-tracker.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

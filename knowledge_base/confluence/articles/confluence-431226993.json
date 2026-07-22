@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-431226993",
+  "title": "StretchSense Studio XR Knowledgebase",
+  "slug": "stretchsense-studio-xr-knowledgebase",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "Welcome to the StretchSense Studio XR Knowledgebase. This is a hub for community driven articles and how-to guides for integrating StretchSense Studio gloves with your devices, games and applications.\n\nWe welcome your feedback on our [Discord channel](https://discord.com/invite/mjeBPezmT9) - we’d love to see what you’re working on!\n\n|  |  |  |\n| --- | --- | --- |\n| [**Hand Engine Release Notes**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVZGA2/hand-engine-release-notes)![image-20240821-030821.png](atlas-asset://confluence-attachment-att505610241) | [**Quick Start Videos**](https://stretchsense.com/training-videos/%C2%A0)![image-20240821-030838.png](atlas-asset://confluence-attachment-att504987652) | [**Hand Engine Licence Setup**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVcGAM)![image-20240821-030845.png](atlas-asset://confluence-attachment-att505315332) |\n| [**Glove Setup and Calibration**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TOJ4000000PDRvOAO)![image-20240821-030851.png](atlas-asset://confluence-attachment-att505282564) | [**Streaming Hand Data**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVeGAM)![image-20240821-030857.png](atlas-asset://confluence-attachment-att505118744) | [**Record & Retarget in Post**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVgGAM)![image-20240821-030903.png](atlas-asset://confluence-attachment-att505610247) |\n| [SteamVR & XR](atlas-knowledge://confluence-504594439)![image-20240821-031252.png](atlas-asset://confluence-attachment-att505020418) |  | [Open SDK](atlas-knowledge://confluence-504561680)![image-20240821-030918.png](atlas-asset://confluence-attachment-att505118750) |\n\n# [Studio Glove - Open SDK](atlas-knowledge://confluence-504561680)\n\nLearn how to integrate StretchSense gloves with games, apps and devices using our Open SDK and OSC.\n\n# [Studio Glove - SteamVR & XR](atlas-knowledge://confluence-504594439)\n\nDiscover how you can use StretchSense Studio Gloves and the StretchSense SteamVR App to play popular games like VRChat using your hands.\n\n# [Reality XR Game](https://stretchsense.atlassian.net/wiki/spaces/RXG)\n\nDiscover how you can use StretchSense XR Game Gloves and the XR Game app to play popular games like VRChat using your hands or stream to VMC compatible VTubing software like Warudo.\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "431226993",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/overview",
+    "space": "431226936",
+    "parent_external_id": null,
+    "revision": 17
+  },
+  "timestamps": {
+    "created_at": "2024-05-30T04:42:56.683+00:00",
+    "updated_at": "2025-06-27T02:13:32.770+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [
+    "confluence-attachment-att440139806",
+    "confluence-attachment-att504987652",
+    "confluence-attachment-att505020418",
+    "confluence-attachment-att505118744",
+    "confluence-attachment-att505118750",
+    "confluence-attachment-att505282564",
+    "confluence-attachment-att505315332",
+    "confluence-attachment-att505511951",
+    "confluence-attachment-att505610241",
+    "confluence-attachment-att505610247",
+    "confluence-attachment-att505610254",
+    "confluence-attachment-att760578148",
+    "confluence-attachment-att760643629",
+    "confluence-attachment-att812843024",
+    "confluence-attachment-att813072395",
+    "confluence-attachment-att813465616",
+    "confluence-attachment-att813858817"
+  ],
+  "relationships": [
+    {
+      "type": "child",
+      "target_id": "confluence-504561680"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-504594439"
+    }
+  ],
+  "checksums": {
+    "source": "fc9a0c6279019abc4373c4ecba96d44dfe030ce9fff27f565517bb6e57789f63",
+    "content": "167ea60efcd0b89af21fdfe44eabba54521ff229cf006fcf1ebd555315c2dd9a"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "63bb6375eac4f07e3f3b1c44",
+      "owner_id": "63bb6375eac4f07e3f3b1c44",
+      "position": 770,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

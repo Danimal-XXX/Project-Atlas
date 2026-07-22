@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-592904194",
+  "title": "Tracker Mounting Guide",
+  "slug": "tracker-mounting-guide",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "This guide covers mounting Vive 3.0, Tundra, Ultimate Trackers and Mocopi trackers to the StretchSense Studio Gloves. It has links to where you can obtain compatible mounts and the necessary required materials to make each attachment, as well as the mounting process.\n\n> NOTE: We recommend using a third-party wrist strap to attach heavier trackers like the VIVE Ultimate Tracker. This helps to reduce the strain on the top electronics module while attached to the StretchSense Studio Gloves.\n\n> TIP: Calibrate the gloves with the tracker attached for best results.\n\n| **Mount Name** | **Tracker** | **Mount Image** | **Mount Image** | **Description** | **STL Download** | **Other Materials** |\n| --- | --- | --- | --- | --- | --- | --- |\n| Universal Mount for Studio Glove | Vive Tracker 3.0 |  |  | StretchSense Studio Glove universal mount (available to select when ordering Studio Glove from StretchSense website). Attach Vive Tracker with 1/4” screw. | N/A | [1/4” D-Ring Screw](https://www.amazon.com/dp/B006GB5MDW) |\n| Lenrui’s Vive Tracker 3.0 Mount for Studio Glove | VIVE Tracker 3.0 | ![Image_54.jpeg](atlas-asset://confluence-attachment-att592904212) | ![vive-tracker.png](atlas-asset://confluence-attachment-att592904219) | Community-made mount by Lenrui from StretchSense Discord. Not recommended for SteamVR games with high activity - use the AMVR palm straps instead. | [Vive3.0-Studio-Glove-Mount.stl](atlas-asset://confluence-attachment-att592904225) | [1/4” D-Ring Screw](https://www.amazon.com/dp/B006GB5MDW) |\n| AMVR Palm Straps | VIVE Tracker 3.0 | ![d5c46b5c-64f9-40b5-a429-a2951a9cbdf6.jpeg](atlas-asset://confluence-attachment-att592904231) | ![51Qp6ba+GsL._AC_SX679_.jpg](atlas-asset://confluence-attachment-att592904237) | Attach Ultimate Tracker using included Tundra baseplate with 1/4” screw. Make Vive 3.0 Tracker align horizontally along the strap with the LED facing your thumb. | N/A | <https://www.amazon.com/Tracker-Adjustable-Tracking-Trackers-Wristband-NO/dp/B07S58VWP6>AMVR Palm Straps |\n| Universal Mount for Studio Glove | Tundra Tracker | ![a4aeb8cb-212c-49b9-b04c-93c2901165ec.jpeg](atlas-asset://confluence-attachment-att592904243) |  | StretchSense Studio Glove universal mount (available to select when ordering Studio Glove from StretchSense website). Attach Tundra Tracker using included Tundra baseplate with 1/4” screw. | N/A | [1/4” D-Ring Screw](https://www.amazon.com/dp/B006GB5MDW) |\n|  | Tundra Tracker | ![Screenshot 2024-10-09 161007.png](atlas-asset://confluence-attachment-att592904249) | ![Screenshot 2024-10-09 160919.png](atlas-asset://confluence-attachment-att592904255) | StretchSense Studio Glove universal mount (available to select when ordering Studio Glove from StretchSense website). Attach this mount to it by sliding it over the universal mount. Attach Tundra tracker by detaching the original base and screwing it to the 3D printed mount using the PH000 screws from the Tundra base. | [StretchSenseTundraTrackerMount.stl](atlas-asset://confluence-attachment-att592904261) | <https://www.amazon.com/Wera-05345290001-Screwdriver-Electronic-Applications/dp/B00LCHYO8E>PH000 ScrewdriverStretchSense Studio Glove Universal Mount |\n| Lenrui’s Vertical Tundra Tracker Mount for Studio Glove | Tundra Tracker | ![Image_65.jpeg](atlas-asset://confluence-attachment-att592904267) | ![Screenshot 2024-10-09 145537.png](atlas-asset://confluence-attachment-att592904273)![Screenshot 2024-10-09 150532.png](atlas-asset://confluence-attachment-att592904279) | Community-made mount by Lenrui from StretchSense Discord. Attach Tundra tracker by detaching the original base and screwing it to the 3D printed mount using the PH000 screws from the Tundra base. | [Studio-Glove-TundraTracker-Mount-Plate-V2-vert.stl](atlas-asset://confluence-attachment-att592904285) Print vertically with supports to improve stability | <https://www.amazon.com/Wera-05345290001-Screwdriver-Electronic-Applications/dp/B00LCHYO8E>PH000 Screwdriver |\n| SlimeVR Tracker Baseplate | SlimeVR | ![IMG_5870.jpg](atlas-asset://confluence-attachment-att651788389)![IMG_5863.jpg](atlas-asset://confluence-attachment-att652083203)![IMG_5864.jpg](atlas-asset://confluence-attachment-att651690064) | ![IMG_5868.jpg](atlas-asset://confluence-attachment-att651984982)![IMG_5865.jpg](atlas-asset://confluence-attachment-att651952221)![IMG_5867.jpg](atlas-asset://confluence-attachment-att651984989)![IMG_5866.jpg](atlas-asset://confluence-attachment-att652083209) | Community-made mount by Snax from StretchSense Discord.1. Attach SlimeVR trackers by opening the original slime case.2. Replace the back panel with the 3D printed part.3. Clip into StretchSense Universal Mount holes. | [SlimeVR Backplate for StretchSense Mounting Clip | SlimeVR\\_Mount\\_1](https://cad.onshape.com/documents/fe62622c0f8b18c3c7d21b33/v/34846ad5fb0a49f3bf531cdd/e/6cb43323b7a449ff479f0ba5) | Official SlimeVR caseOfficial SlimeVR case screwsStretchSense Universal Mount |\n| Ultimate Tracker Low-Profile Mount for Studio Glove | Ultimate Tracker | ![ultimate-tracker-cropped.jpg](atlas-asset://confluence-attachment-att592904291) | ![Screenshot 2024-07-24 094908.png](atlas-asset://confluence-attachment-att592904297) | Experimental Ultimate Tracker mount by StretchSense. Print in PLA with supports vertically on diagonal angle to improve structure. Supports must be removed cleanly using cutting pliers. Attach hair ties around thumb to stabilize while attached to glove and to reduce strain on the mount and Studio Glove electronics module. | [StretchSense VIVE Ultimate Tracker Mount-external-hooks.stl](atlas-asset://confluence-attachment-att592904303) | Cutting pliersRubber bands or hair ties |\n| AMVR Palm Straps | Ultimate Tracker | ![61AZDbUQvjL_edited.jpg](atlas-asset://confluence-attachment-att592904309) | ![51Qp6ba+GsL._AC_SX679_.jpg](atlas-asset://confluence-attachment-att592904237) | Attach Ultimate Tracker using included Tundra baseplate with 1/4” screw. Make Ultimate Tracker align horizontally along the strap with the LED facing your chest when your arms are outstretched. | N/A | <https://www.amazon.com/Tracker-Adjustable-Tracking-Trackers-Wristband-NO/dp/B07S58VWP6>AMVR Palm Straps |\n| Mocopi Mount | mocopi left / right trackers | ![Image (81).jpeg](atlas-asset://confluence-attachment-att592904326)![Image (86).jpeg](atlas-asset://confluence-attachment-att592904332) | ![Image (85).jpeg](atlas-asset://confluence-attachment-att592904338)![Image (84).jpeg](atlas-asset://confluence-attachment-att592904344)![Image (87).jpeg](atlas-asset://confluence-attachment-att592904350) | Using the T6 screwdriver, unscrew the T6 screws from the left and right mocopi wrist straps to release the magnetic base of the mount. Clip the 3D printed mount in between the two sides of the magnetic base and screw the T6 screws back in. Don’t over tighten and be careful not to strip the screws.You must wear the other trackers in the correct position and calibrate using SlimeVR server connected to the [mocopi app](https://play.google.com/store/apps/details?id=com.sony.mocopi&hl=en-US). | [MOCOPI MOUNT design file.stl](atlas-asset://confluence-attachment-att592904356) You may need to file and cleanup the 3D print to get the magnetic base to fit correctly. | <https://www.amazon.com/Wera-05118181001-Kraftform-Electronics-Screwdriver/dp/B003ES5M4O?ref_=ast_sto_dp&th=1>T5 Screwdriver |\n\n| **Changelog** | **Version** | **Publish Date (YYYY/MM/DD)** |\n| --- | --- | --- |\n| Add SlimeVR backplate 3D print by Snax. | v1.1.0 | 2025/01/30 |\n| Initial version. | v1.0.0 | 2024/11/20 |\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/pages/592904194/Tracker+Mounting+Guide",
+    "space": "431226936",
+    "parent_external_id": "504594439",
+    "revision": 3
+  },
+  "timestamps": {
+    "created_at": "2024-11-19T23:23:47.906+00:00",
+    "updated_at": "2025-01-30T01:01:07.370+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [
+    "confluence-attachment-att592904212",
+    "confluence-attachment-att592904219",
+    "confluence-attachment-att592904225",
+    "confluence-attachment-att592904231",
+    "confluence-attachment-att592904237",
+    "confluence-attachment-att592904243",
+    "confluence-attachment-att592904249",
+    "confluence-attachment-att592904255",
+    "confluence-attachment-att592904261",
+    "confluence-attachment-att592904267",
+    "confluence-attachment-att592904273",
+    "confluence-attachment-att592904279",
+    "confluence-attachment-att592904285",
+    "confluence-attachment-att592904291",
+    "confluence-attachment-att592904297",
+    "confluence-attachment-att592904303",
+    "confluence-attachment-att592904309",
+    "confluence-attachment-att592904326",
+    "confluence-attachment-att592904332",
+    "confluence-attachment-att592904338",
+    "confluence-attachment-att592904344",
+    "confluence-attachment-att592904350",
+    "confluence-attachment-att592904356",
+    "confluence-attachment-att651690064",
+    "confluence-attachment-att651788389",
+    "confluence-attachment-att651952221",
+    "confluence-attachment-att651984982",
+    "confluence-attachment-att651984989",
+    "confluence-attachment-att652083203",
+    "confluence-attachment-att652083209"
+  ],
+  "relationships": [
+    {
+      "type": "parent",
+      "target_id": "confluence-504594439"
+    }
+  ],
+  "checksums": {
+    "source": "32ca9ed44c6e49acd833bcf7cc16970a81d3f89f3dd1606e9d6e948c0c48b032",
+    "content": "074266a721302cb5e0cb8ad0da08ac7e2a19d8ca7a9ccbd8990c431b23e3f998"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "owner_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "position": 3904,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

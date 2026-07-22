@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att509804680",
+  "filename": "VRChat Controller Profile 20240826.zip",
+  "media_type": "application/zip",
+  "size_bytes": 1643,
+  "sha256": "8483cce4241d87b377009620fe1686d4c025be412c417a475055d9bd117051eb",
+  "local_path": "pages/509247722/attachments/att509804680-VRChat Controller Profile 20240826.zip",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att509804680",
+    "container_external_id": "509247722",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509247722&preview=%2F509247722%2F509804680%2FVRChat+Controller+Profile+20240826.zip"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 2,
+      "comment": ""
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-509903268",
+  "title": "OpenGloves Configuration Guide",
+  "slug": "opengloves-configuration-guide",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "> TIP: This guide assumes you have followed the\n> StretchSense SteamVR App Setup Guide\n> .\n\n> NOTE: Changes are incoming in future versions of the StretchSense App for SteamVR which may break future compatibility with OpenGloves. We are planning to add the\n> Calibrate Controller Offsets\n> feature from OpenGloves into our app at this time so custom mounting solutions or alternate trackers can be used.\n\n# Using Unsupported SteamVR Trackers or Third-Party Mounts\n\nAs of v0.6.0 of the StretchSense SteamVR App, the supported trackers are Tundra or HTC VIVE 3.0 using the universal mount that is selectable when ordering Studio Gloves from the StretchSense website.\n\nIf your tracker isn’t listed in the app, or you are using Virtual Desktop’s SteamVR tracker emulation, third-party straps or 3D printed mounts perform the following:\n\n1. Install [OpenGloves from the Steam store](https://store.steampowered.com/app/1574050/OpenGloves/).\n2. Open **StreamVR Settings → Startup / Shutdown → Manage SteamVR Add-Ons**.\n3. Toggle **Off** the **stretchsense** add-on.\n4. Toggle **On** the **opengloves** add-on.\n\n   ![Screenshot 2024-08-19 123237.png](atlas-asset://confluence-attachment-att509215154)\n5. If you’re using trackers, in the Steam VR settings, under **Controllers**, select **Manage Trackers**, otherwise skip to step 6.\n\n   ![Screenshot 2024-05-23 140815.png](atlas-asset://confluence-attachment-att550142003)\n\n   For the Left and Right trackers set the **Tracker Role** set to **HELD IN HAND**, then set the Hand value to match the glove you have attached the tracker to. Click **Close**and also close SteamVR Settings.\n\n   ![Screenshot 2024-06-15 115550.png](atlas-asset://confluence-attachment-att550142009)\n6. Leave SteamVR running in the background.\n7. Start the **OpenGloves** UI app.\n\n   ![Screenshot 2024-06-15 122156 (1).png](atlas-asset://confluence-attachment-att509215161)\n8. Enable the named pipe communication option and click **Save**.\n\n   ![Screenshot 2024-06-15 123237 (2).png](atlas-asset://confluence-attachment-att509215167)\n9. Switch to the **Functions** tab.\n10. Put on your StretchSense gloves and trackers. If using controllers for tracking, attach these securely to your wrist.\n11. In your VR headset, rotate your left-hand virtual Valve Index Controllers so they are facing a comfortable direction that would allow you to pretend to hold the handles.\n12. In OpenGloves, click the Start Auto-Calibration button. This will cause the virtual Valve Index Controllers to freeze in place.\n\n    ![Screenshot 2024-06-15 122226 (2).png](atlas-asset://confluence-attachment-att509215173)\n13. Make a gripping gesture and move your physical left hand so it is positioned around the left virtual Valve Index Controller’s handle. Hold it there until the calibration timer expires and the controller un-freezes.\n14. Check the virtual Valve Index Controller is oriented to your liking, then repeat steps 6-9, selecting the **Right Hand** as the value of the **For Hand** dropdown in the **Functions** screen of OpenGloves. You may need to check in-game to ensure your game hands are also oriented correctly. Some games like VRChat have additional options for wrist correction if you need to adjust the wrist tilt angle further.\n\n> NOTE: Some straps may place the tracker along the wrist. This will prevent the bend of your hand from being tracked. If the tracker is small enough, use a\n> compatible 3D printed mount design from the StretchSense website\n> .\n\n> WARNING: Large heavy trackers like the HTC Vive Ultimate Tracker may put additional strain on the Studio Gloves. If you are playing high-intensity SteamVR games with these trackers, use a thumb strap like the ones from the\n> AMVR Full Body Straps\n> kit to avoid accidental damage to the gloves.\n\n| **Changelog** | **Version** | **Publish Date (YYYY/MM/DD)** |\n| --- | --- | --- |\n| Add information on using controllers as trackers. | v1.1.0 | 2024/10/10 |\n| Initial version. | v1.0.0 | 2024/08/26 |\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "509903268",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/pages/509903268/OpenGloves+Configuration+Guide",
+    "space": "431226936",
+    "parent_external_id": "504594439",
+    "revision": 2
+  },
+  "timestamps": {
+    "created_at": "2024-08-26T05:01:04.751+00:00",
+    "updated_at": "2024-10-09T23:28:22.668+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [
+    "confluence-attachment-att509215154",
+    "confluence-attachment-att509215161",
+    "confluence-attachment-att509215167",
+    "confluence-attachment-att509215173",
+    "confluence-attachment-att550141997",
+    "confluence-attachment-att550142003",
+    "confluence-attachment-att550142009"
+  ],
+  "relationships": [
+    {
+      "type": "parent",
+      "target_id": "confluence-504594439"
+    }
+  ],
+  "checksums": {
+    "source": "3cd27b596a6e4cdb51932058254d2581b7cd70f2df776ae6b7cc589755adb522",
+    "content": "697eb7f753dc8d936391693bfb6aacf00fea7da9c420e1895d088d569e5d7e79"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "owner_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "position": 657,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

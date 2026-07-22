@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904326",
+  "filename": "Image (81).jpeg",
+  "media_type": "image/jpeg",
+  "size_bytes": 964386,
+  "sha256": "147beda62ea65190037a029ca269b926e2d8edd26c9053607a7b84a622f4d9c6",
+  "local_path": "pages/592904194/attachments/att592904326-Image (81).jpeg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904326",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904326%2FImage+%2881%29.jpeg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

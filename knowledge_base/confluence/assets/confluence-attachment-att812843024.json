@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att812843024",
+  "filename": "xrglove-1584x396-c1 (2).png",
+  "media_type": "image/png",
+  "size_bytes": 13524,
+  "sha256": "a9426d0cff0f33069a31cc380a9e22bdbab4dec9e6cc57fadedf752264926c1c",
+  "local_path": "pages/431226993/attachments/att812843024-xrglove-1584x396-c1 (2).png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att812843024",
+    "container_external_id": "431226993",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=431226993&preview=%2F431226993%2F812843024%2Fxrglove-1584x396-c1+%282%29.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

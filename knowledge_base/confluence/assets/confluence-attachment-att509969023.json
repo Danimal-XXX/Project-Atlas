@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att509969023",
+  "filename": "d-down.png",
+  "media_type": "image/png",
+  "size_bytes": 3575263,
+  "sha256": "48e26cd691c22e51873470dfbfacae18b92aa486e117eaf3ffbc88774317ed2f",
+  "local_path": "pages/509804865/attachments/att509969023-d-down.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att509969023",
+    "container_external_id": "509804865",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509804865&preview=%2F509804865%2F509969023%2Fd-down.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

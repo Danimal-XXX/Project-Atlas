@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att520650777",
+  "filename": "Mini-Wireless-Bluetooth-Gamepad-VR-Controller-Remote-Pad-For-IOS-Android-Smartphone-PC-Laptop-Game-Accessories.jpg_.png",
+  "media_type": "image/png",
+  "size_bytes": 130209,
+  "sha256": "3a130f6eb95ff963b4a68ff91d0d9a781f704c681c21d16aaa7686a9b1d0ec3f",
+  "local_path": "pages/509247722/attachments/att520650777-Mini-Wireless-Bluetooth-Gamepad-VR-Controller-Remote-Pad-For-IOS-Android-Smartphone-PC-Laptop-Game-Accessories.jpg_.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att520650777",
+    "container_external_id": "509247722",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509247722&preview=%2F509247722%2F520650777%2FMini-Wireless-Bluetooth-Gamepad-VR-Controller-Remote-Pad-For-IOS-Android-Smartphone-PC-Laptop-Game-Accessories.jpg_.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

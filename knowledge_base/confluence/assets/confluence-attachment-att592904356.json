@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904356",
+  "filename": "MOCOPI MOUNT design file.stl",
+  "media_type": "application/octet-stream",
+  "size_bytes": 8834184,
+  "sha256": "01a0469ae9fe9b414fce661816a2b1bfe4f3f736f7bc228d44c0365d0c9ab44e",
+  "local_path": "pages/592904194/attachments/att592904356-MOCOPI MOUNT design file.stl",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904356",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904356%2FMOCOPI+MOUNT+design+file.stl"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

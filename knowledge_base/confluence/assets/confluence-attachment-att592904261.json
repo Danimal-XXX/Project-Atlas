@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904261",
+  "filename": "StretchSenseTundraTrackerMount.stl",
+  "media_type": "application/octet-stream",
+  "size_bytes": 43851084,
+  "sha256": "406914971785545a32b1283f11c24a9c547f73ce4254bfacd7ba031d21664c6b",
+  "local_path": "pages/592904194/attachments/att592904261-StretchSenseTundraTrackerMount.stl",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904261",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904261%2FStretchSenseTundraTrackerMount.stl"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

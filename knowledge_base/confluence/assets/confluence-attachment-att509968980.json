@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att509968980",
+  "filename": "Boneworks Controller Profile 20240826.zip",
+  "media_type": "application/zip",
+  "size_bytes": 1265,
+  "sha256": "38d1c3fa79bf59bd92b514f705dd70324c6a78f410024560586106d22cd1d72f",
+  "local_path": "pages/509804865/attachments/att509968980-Boneworks Controller Profile 20240826.zip",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att509968980",
+    "container_external_id": "509804865",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509804865&preview=%2F509804865%2F509968980%2FBoneworks+Controller+Profile+20240826.zip"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

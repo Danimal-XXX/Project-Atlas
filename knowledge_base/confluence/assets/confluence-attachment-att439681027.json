@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att439681027",
+  "filename": "Open SDK UML API Diagram.drawio.png",
+  "media_type": "image/png",
+  "size_bytes": 130944,
+  "sha256": "b2f420d933763bf411b1c4e289f7865409652324ce280ab9a29ba84d439f53bc",
+  "local_path": "pages/439320599/attachments/att439681027-Open SDK UML API Diagram.drawio.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att439681027",
+    "container_external_id": "439320599",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=439320599&preview=%2F439320599%2F439681027%2FOpen+SDK+UML+API+Diagram.drawio.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": "draw.io preview"
+    }
+  }
+}

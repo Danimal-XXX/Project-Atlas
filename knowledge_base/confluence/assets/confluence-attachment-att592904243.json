@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904243",
+  "filename": "a4aeb8cb-212c-49b9-b04c-93c2901165ec.jpeg",
+  "media_type": "image/jpeg",
+  "size_bytes": 278667,
+  "sha256": "0edc3cd53c7c357d79086fee90e270a0bb6c55df35ad0d7a1e26c3595ea2655d",
+  "local_path": "pages/592904194/attachments/att592904243-a4aeb8cb-212c-49b9-b04c-93c2901165ec.jpeg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904243",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904243%2Fa4aeb8cb-212c-49b9-b04c-93c2901165ec.jpeg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

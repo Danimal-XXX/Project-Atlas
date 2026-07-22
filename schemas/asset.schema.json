@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-atlas.local/schemas/asset.schema.json",
+  "title": "Atlas Asset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "filename", "media_type", "size_bytes", "sha256", "local_path", "source", "status"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "minLength": 1},
+    "filename": {"type": "string", "minLength": 1},
+    "media_type": {"type": "string", "minLength": 1},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "local_path": {"type": "string", "minLength": 1},
+    "status": {"enum": ["available", "missing", "failed"]},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["connector", "external_id", "container_external_id", "url"],
+      "properties": {
+        "connector": {"type": "string", "minLength": 1},
+        "external_id": {"type": "string", "minLength": 1},
+        "container_external_id": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "format": "uri"}
+      }
+    },
+    "extensions": {"type": "object", "additionalProperties": true, "default": {}}
+  }
+}

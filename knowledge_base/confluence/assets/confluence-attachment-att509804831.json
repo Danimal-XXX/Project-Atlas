@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att509804831",
+  "filename": "menu.png",
+  "media_type": "image/png",
+  "size_bytes": 3647306,
+  "sha256": "7101953f8f3832b279b512d3df90945c4213f610bc4fda42c035bb758f63ad9c",
+  "local_path": "pages/509247722/attachments/att509804831-menu.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att509804831",
+    "container_external_id": "509247722",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509247722&preview=%2F509247722%2F509804831%2Fmenu.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 2,
+      "comment": ""
+    }
+  }
+}

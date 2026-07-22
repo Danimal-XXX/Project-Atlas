@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904291",
+  "filename": "ultimate-tracker-cropped.jpg",
+  "media_type": "image/jpeg",
+  "size_bytes": 712195,
+  "sha256": "a5fc3c525e88700f6fc0c2c16b63019370337f8902e3141018e1df54ba3f0689",
+  "local_path": "pages/592904194/attachments/att592904291-ultimate-tracker-cropped.jpg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904291",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904291%2Fultimate-tracker-cropped.jpg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

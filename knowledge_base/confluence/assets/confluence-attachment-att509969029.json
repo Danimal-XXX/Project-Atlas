@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att509969029",
+  "filename": "grab.png",
+  "media_type": "image/png",
+  "size_bytes": 3244333,
+  "sha256": "aeacf60f458506db1f46c221493ae884fae42600ecc074e825b3430689a5db84",
+  "local_path": "pages/509804865/attachments/att509969029-grab.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att509969029",
+    "container_external_id": "509804865",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=509804865&preview=%2F509804865%2F509969029%2Fgrab.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 2,
+      "comment": ""
+    }
+  }
+}

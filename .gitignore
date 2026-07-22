@@ -1,13 +1,85 @@
+# Secrets and local configuration
 .env
-.venv/
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+credentials.*.json
+service-account*.json
+
+# Python bytecode and caches
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.hypothesis/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test, coverage, and profiling output
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+*.prof
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+tmp/
+temp/
+
+# IDE and editor state
+.idea/
+.vscode/
+*.code-workspace
+
+# macOS and Windows metadata
 .DS_Store
-knowledge_base/output/
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+Desktop.ini
+
+# Atlas browser sessions and accidental browser profiles
 .atlas_browser_session/
+/Macintosh HD/
+
+# Atlas generated and reproducible working data
+staging/
 output/
 archive/
 workspace/
+knowledge_base/output/
+
+# Destination-specific operational state (remote IDs and attachment URLs)
+inventory/zoho/
 
 # WordPress software downloads
 output/wordpress/software_downloads/

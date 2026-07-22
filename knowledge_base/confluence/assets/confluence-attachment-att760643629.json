@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att760643629",
+  "filename": "W5A2106-triangles-sml-1536x1025.jpg",
+  "media_type": "image/jpeg",
+  "size_bytes": 107515,
+  "sha256": "838d742f4e0693e4ea339771598feee063de507e402e55f5904852f88b25a059",
+  "local_path": "pages/431226993/attachments/att760643629-W5A2106-triangles-sml-1536x1025.jpg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att760643629",
+    "container_external_id": "431226993",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=431226993&preview=%2F431226993%2F760643629%2FW5A2106-triangles-sml-1536x1025.jpg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

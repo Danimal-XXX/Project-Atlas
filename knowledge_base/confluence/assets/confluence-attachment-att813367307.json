@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att813367307",
+  "filename": "Tracker Mount Hero Image 1.jpg",
+  "media_type": "image/jpeg",
+  "size_bytes": 305595,
+  "sha256": "c449805b0800abb93c9363d32a327791b713c7cff82beafeebe29d7003f77904",
+  "local_path": "pages/504594439/attachments/att813367307-Tracker Mount Hero Image 1.jpg",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att813367307",
+    "container_external_id": "504594439",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=504594439&preview=%2F504594439%2F813367307%2FTracker+Mount+Hero+Image+1.jpg"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

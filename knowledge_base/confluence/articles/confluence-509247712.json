@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-509247712",
+  "title": "StretchSense SteamVR Controller Bindings Guide",
+  "slug": "stretchsense-steamvr-controller-bindings-guide",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "This guide will help you configure optimal SteamVR controller bindings for the StretchSense SteamVR App v0.6.0 beta or later. This guide assumes you have selected the Index Controller as your current device in the SteamVR controller bindings menu and that your trackers are mounted to Studio Gloves as depicted below.\n\n## Button Gesture Training\n\nThe below video has a good overview on tweaking the Valve Index Controller bindings. Some of these tips may be applicable when using the StretchSense SteamVR App.\n\n<https://youtu.be/Ke_kfTAVN2I?si=eaDfy8VdoMBTXjk3>\n\n# Games Compatibility List\n\n## VRChat\n\n> NOTE: As of v0.6.0 of the StretchSense SteamVR App, VRChat is partially supported, but changes to SteamVR controller bindings are needed to change some buttons to long-press to activate menus for the best experience. The VRChat radial action menu will be better supported at a later date.\n\nSee our full [VRChat guide](atlas-knowledge://confluence-509247722).\n\n## Boneworks\n\n> NOTE: As of v0.6.0 of the StretchSense SteamVR App, Boneworks is partially supported and requires change in SteamVR controller bindings to make the left and right grip buttons toggleable in order to use the LT/RT buttons to fire held guns while holding them.\n\nSee our full [Boneworks guide](atlas-knowledge://confluence-509804865).\n\n## Minecraft\n\n> TIP: Minecraft is compatible when using the ViveCraft Fabric mod and requires changes to SteamVR controller bindings to allow exiting vehicles such as boats and minecarts. v0.6.0 of the StretchSense SteamVR App doesn’t support emulating the Valve Index joystick click button at this time.\n\nSee our full [Minecraft guide](atlas-knowledge://confluence-510034021).\n\n# Half-Life: Alyx\n\n> TIP: Half-Life: Alyx is mostly playable, except it requires remapping the weapon/tool switch menu from the touchpad to the B button in the SteamVR controller bindings. v0.6.0 of the StretchSense SteamVR App doesn’t support emulating the Valve Index touchpad at this time.\n\nFull guide for Half-Life: Alyx coming soon.\n\n# Walking Dead: Saints and Sinners\n\n> WARNING: During our testing this was not possible to use with the StretchSense SteamVR add-on or the OpenGloves driver add-on. Walking Dead: Saints and Sinners defaults to Vive controller bindings, so thumbsticks and grip does not pass through correctly. We welcome feedback for workarounds to make this game functional.\n\n| **Changelog** | **Version** | **Publish Date (YYYY/MM/DD)** |\n| --- | --- | --- |\n| Initial version. | v1.0.0 | 2024/08/26 |\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "509247712",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/pages/509247712/StretchSense+SteamVR+Controller+Bindings+Guide",
+    "space": "431226936",
+    "parent_external_id": "504594439",
+    "revision": 2
+  },
+  "timestamps": {
+    "created_at": "2024-08-26T04:50:07.607+00:00",
+    "updated_at": "2024-08-26T04:52:39.465+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [],
+  "relationships": [
+    {
+      "type": "parent",
+      "target_id": "confluence-504594439"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-509247722"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-509804865"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-510034021"
+    }
+  ],
+  "checksums": {
+    "source": "e98cdc90bd87bf61ba6e322684190dd4d356e884864cce36b9c82dc6e2d23307",
+    "content": "8437d562f8753b31a6e0493b7940fe56ada890a0b1d5b770f7b5c10d05234ac0"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "owner_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "position": 895,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

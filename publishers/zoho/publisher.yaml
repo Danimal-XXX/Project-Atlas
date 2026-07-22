@@ -1,0 +1,22 @@
+name: Zoho HTML Bundle
+version: "1.0"
+type: publisher
+module: publish.py
+input_schema: knowledge.schema.json
+output:
+  path: output/zoho/confluence
+  manifest_schema: publisher-manifest.schema.json
+capabilities:
+  html: true
+  tables: true
+  code_blocks: true
+  internal_links: true
+  attachments: true
+api_import:
+  module: importer.py
+  dry_run_default: true
+  state: inventory/zoho/confluence-import-state.json
+  oauth_scopes:
+    - Desk.articles.READ
+    - Desk.articles.CREATE
+    - Desk.articles.UPDATE

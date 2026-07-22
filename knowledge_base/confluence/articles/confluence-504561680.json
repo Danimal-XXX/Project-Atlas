@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-504561680",
+  "title": "Studio Glove - Open SDK",
+  "slug": "studio-glove-open-sdk",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "|  |  |  |\n| --- | --- | --- |\n| [**Hand Engine Release Notes**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVZGA2/hand-engine-release-notes)![image-20240821-030821.png](atlas-asset://confluence-attachment-att505118766) | [**Quick Start Videos**](https://stretchsense.com/training-videos/%C2%A0)![image-20240821-030838.png](atlas-asset://confluence-attachment-att505118772) | [**Hand Engine Licence Setup**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVcGAM)![image-20240821-030845.png](atlas-asset://confluence-attachment-att505118778) |\n| [**Glove Setup and Calibration**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TOJ4000000PDRvOAO)![image-20240821-030851.png](atlas-asset://confluence-attachment-att505118784) | [**Streaming Hand Data**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVeGAM)![image-20240821-030857.png](atlas-asset://confluence-attachment-att505118790) | [**Record & Retarget in Post**](https://stretchsense.my.site.com/defaulthelpcenter26Sep/s/topic/0TO5j000000cIVgGAM)![image-20240821-030903.png](atlas-asset://confluence-attachment-att505118796) |\n| [SteamVR & XR](atlas-knowledge://confluence-504594439)![image-20240821-031252.png](atlas-asset://confluence-attachment-att505118802) |  | [Open SDK](atlas-knowledge://confluence-504561680)![image-20240821-030918.png](atlas-asset://confluence-attachment-att505118808) |\n\n# Documentation & Guides\n\nArticles on how developers can use the StretchSense Open SDK to integrate StretchSense gloves with new and existing devices and apps.\n\n- [Open SDK OSC API Reference](atlas-knowledge://confluence-439320599) - Documentation on the OSC addresses and message format for the StretchSense Open SDK. This allows applications to connect to Hand Engine to receive data from StretchSense Pro Fidelity and Studio gloves.\n- [Use the Open SDK with Unity](atlas-knowledge://confluence-439156771) - Discover how to use the Open SDK samples in the StretchSense Plugin for Unity.\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "504561680",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/pages/504561680/Studio+Glove+-+Open+SDK",
+    "space": "431226936",
+    "parent_external_id": "431226993",
+    "revision": 7
+  },
+  "timestamps": {
+    "created_at": "2024-08-21T02:42:10.614+00:00",
+    "updated_at": "2025-06-08T22:44:47.333+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [
+    "confluence-attachment-att505118766",
+    "confluence-attachment-att505118772",
+    "confluence-attachment-att505118778",
+    "confluence-attachment-att505118784",
+    "confluence-attachment-att505118790",
+    "confluence-attachment-att505118796",
+    "confluence-attachment-att505118802",
+    "confluence-attachment-att505118808",
+    "confluence-attachment-att792985684"
+  ],
+  "relationships": [
+    {
+      "type": "parent",
+      "target_id": "confluence-431226993"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-439156771"
+    },
+    {
+      "type": "child",
+      "target_id": "confluence-439320599"
+    }
+  ],
+  "checksums": {
+    "source": "e6b38249d4c2d376a1108557f0cd4e4fc52635a09c43994e867bb54b9b261141",
+    "content": "60165aa3959813b6d8439f05ab7f87d01ae4e372518260a8d2ed781dc1303e9e"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "owner_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "position": 887,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att592904225",
+  "filename": "Vive3.0-Studio-Glove-Mount.stl",
+  "media_type": "application/octet-stream",
+  "size_bytes": 1004684,
+  "sha256": "d523c5044477cf44f3ebe5607c286f042d851cdbd9e59a7809a98265800a809d",
+  "local_path": "pages/592904194/attachments/att592904225-Vive3.0-Studio-Glove-Mount.stl",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att592904225",
+    "container_external_id": "592904194",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=592904194&preview=%2F592904194%2F592904225%2FVive3.0-Studio-Glove-Mount.stl"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

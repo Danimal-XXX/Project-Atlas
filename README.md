@@ -94,8 +94,94 @@ Knowledge Source
  Generate Metadata
         │
         ▼
- Searchable Knowledge Base
+Searchable Knowledge Base
 ```
+
+## Source plugins and schema enforcement
+
+Atlas discovers source connectors through `sources/*/connector.yaml`. Manifests declare the connector identity, the lifecycle methods it actually supports (`discover`, `mirror`, `inventory`, and `package`), the module for each method, and the schema produced by packaging.
+
+Package output may be one canonical object or an iterable of objects. The core plugin manager validates every packaged object against its declared Draft 2020-12 JSON Schema before returning it to the canonical knowledge pipeline. Invalid objects are rejected with their object ID and precise data/schema paths. Source-only metadata belongs under `extensions`; publishers consume validated canonical objects rather than connector-specific records.
+
+See `ATLAS.md` for the complete connector manifest example and development contract.
+
+## Confluence crawl
+
+The Confluence connector now implements the full source lifecycle. It scopes discovery to a selected root page, preserves raw page JSON and storage-format HTML, downloads attachments, produces CSV/JSON inventory files, transforms content into Markdown, validates canonical knowledge and asset records, and writes a package manifest.
+
+Configure `.env` from `.env.example`, then preview the selected tree without writing files:
+
+```bash
+.venv/bin/python -m sources.confluence.crawl \
+  --root-page-id 431226993 \
+  --limit 3 \
+  --dry-run
+```
+
+Run the complete resumable crawl with:
+
+```bash
+.venv/bin/python -m sources.confluence.crawl \
+  --root-page-id 431226993
+```
+
+Raw evidence is written under `staging/confluence`, inventory under `inventory/confluence`, and validated canonical objects under `knowledge_base/confluence`. Reruns reuse unchanged page bodies and attachment files. Use `--no-resume` to force retrieval or `--no-attachments` for a metadata/body-only run.
+
+Review the canonical package with:
+
+```bash
+.venv/bin/python -c "from sources.confluence.review import review; print(review())"
+```
+
+The review validates all canonical articles and assets and reports empty content, unresolved source constructs, missing assets, and broken relationships in `knowledge_base/confluence/review-report.json`.
+
+## Zoho HTML publishing
+
+Generate a portable Zoho-ready HTML bundle from validated canonical objects:
+
+```bash
+.venv/bin/python -m publishers.zoho.publish
+```
+
+The publisher validates every article and asset before creating:
+
+```text
+output/zoho/confluence/
+├── articles/              # HTML articles with rewritten internal links
+├── assets/                # One deduplicated copy of every referenced asset
+├── manifest.json          # Published paths, sizes, and checksums
+└── IMPORT_INSTRUCTIONS.md
+```
+
+The bundle can be checked without credentials or network access:
+
+```bash
+.venv/bin/python -m publishers.zoho.importer
+```
+
+After the Zoho OAuth values, organisation ID, and category ID are configured in
+`.env`, test one article as a draft before importing the complete set:
+
+```bash
+.venv/bin/python -m publishers.zoho.importer \
+  --apply \
+  --category-id <writable-zoho-category-id> \
+  --accounts-url https://accounts.zoho.eu \
+  --status Draft \
+  --only confluence-509247712
+
+.venv/bin/python -m publishers.zoho.importer \
+  --apply \
+  --category-id <writable-zoho-category-id>
+```
+
+The importer adopts an existing article with the same permalink or exact title,
+so manually imported articles are updated rather than duplicated. It uploads and
+associates article assets, rewrites internal article links to Zoho portal URLs,
+verifies each result, and records Atlas-to-Zoho IDs and checksums in
+`inventory/zoho/confluence-import-state.json`. Reruns skip unchanged verified
+articles. `--apply` is always required for Zoho writes; the default status is
+`Draft`.
 
 ---
 

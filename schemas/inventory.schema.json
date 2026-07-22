@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-atlas.local/schemas/inventory.schema.json",
+  "title": "Atlas Source Inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "connector", "generated_at", "item_count", "items"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "connector": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "root_page_id": {"type": ["string", "null"]},
+    "space_id": {"type": ["string", "null"]},
+    "item_count": {"type": "integer", "minimum": 0},
+    "items": {"type": "array", "items": {"type": "object"}}
+  }
+}

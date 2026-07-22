@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-509804865",
+  "title": "StretchSense SteamVR Boneworks Guide",
+  "slug": "stretchsense-steamvr-boneworks-guide",
+  "status": "published",
+  "content": {
+    "format": "markdown",
+    "body": "<https://store.steampowered.com/app/823500/BONEWORKS/>\n\n# Required Materials\n\n## Software\n\nThe below software is required for this guide, except those marked as optional:\n\n> TIP: Installers for the\n> StretchSense SteamVR App\n> can be downloaded from the\n> My Account → Software Downloads\n> section of the StretchSense website.\n\n| **Description** | **Version** |\n| --- | --- |\n| [Hand Engine](https://stretchsense001.sharepoint.com/sites/Software/Shared%20Documents/Forms/AllItems.aspx?csf=1&web=1&e=ANWsqG&OR=Teams%2DHL&CT=1723825264754&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNDA3MTEyODgyNSIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D&CID=fa45ce81%2D3f3c%2D40f3%2D87a4%2D4f6a0453ad78&FolderCTID=0x0120007CF0041BD039D547AE4EEBF5E9C8C9F9&id=%2Fsites%2FSoftware%2FShared%20Documents%2FCollaboration%2FReleasing%2FHand%2DEngine%2D3%2D2%2D0%2DLITE%2FUnsigned%20%2D%20Do%20Not%20Release) | 3.2.0-LITE |\n| [Steam Desktop Client](https://store.steampowered.com/about/) | latest |\n| [SteamVR](https://store.steampowered.com/app/250820/SteamVR/) | 2.7.4 |\n| StretchSense Driver Add-On for SteamVR (Included with StretchSense SteamVR App installer) | latest |\n| StretchSense SteamVR App | 0.6.0 |\n| [Boneworks](https://store.steampowered.com/app/823500/BONEWORKS/) (Steam Store) | latest |\n\n# General Notes\n\n> NOTE: Boneworks is a physics driven game so any action like holding an object or surface is subject to break forces. These will override any hand states, including whether or not you are currently holding an object.\n> We have not tested the entirety of the game using these bindings so it may be possible that certain parts of the game are impassable without future improvements to the StretchSense SteamVR App.\n\n# SteamVR Controller Profile\n\n1. In Windows, unzip and place the profile json in `%USERPROFILE%\\Documents\\steamvr\\input`:   \n   [Boneworks Controller Profile 20240826.zip](atlas-asset://confluence-attachment-att509968980)\n2. Open **SteamVR Settings → Controllers → Manage Controller Bindings → VRChat → Active Controller: Index Controller → Active Controller Binding: Custom**, select the `StretchSense BONEWORKS configuration for Index Controller`.\n\n## Controller Profile Default Binding\n\n|  |  |\n| --- | --- |\n| ![Screenshot 2024-08-26 155332.png](atlas-asset://confluence-attachment-att509968987) | ![Screenshot 2024-08-26 155358.png](atlas-asset://confluence-attachment-att509968993) |\n\n## Boneworks Gestures\n\n> TIP: We recommend training these standard gestures in the StretchSense SteamVR app.\n\nThe following binding changes will help stop accidental activations:\n\n- **Right Joystick** - Remove the Position binding so the right hand doesn’t turn left/right if you have trained these buttons on the right hand in the StretchSense SteamVR App.\n- **Left/Right Grip** - Remove the **Single** binding for the grip buttons. Add a **Use as Toggle Button** binding and bind to on **Touch** instead. This will allow objects to be held and activated at the same time in v0.6.0 of the StretchSense SteamVR App.\n\n### Left Hand\n\n> WARNING: As of StretchSense SteamVR App v0.6.0 only values of 1.0 are outputted for emulated triggers and joysticks.\n\n| **Pose** | **Button Name** | **Action** | **Type** | **Description** |\n| --- | --- | --- | --- | --- |\n| ![d-idle.png](atlas-asset://confluence-attachment-att509968999) | **Idle** |  |  | Make the horns gesture, then move your thumb straight up. This represents the centered position of joystick. |\n| ![d-up.png](atlas-asset://confluence-attachment-att509969005) | **Up** | Walk Forward | [Status: Scalar Y: 1.0] \\* | Make the horns gesture  with your thumb forward, parallel to your index finger. |\n| ![d-left.png](atlas-asset://confluence-attachment-att509969011) | **Left** | Strafe Left | [Status: Scalar X: -1.0] \\* | Make the horns gesture  with your thumb pulled towards the left side of your hand, away from your palm. |\n| ![d-right.png](atlas-asset://confluence-attachment-att509969017) | **Right** | Strafe Right | [Status: Scalar X: 1.0] \\* | Make the horns gesture  with your thumb pulled towards the right side of your hand, towards your palm. |\n| ![d-down.png](atlas-asset://confluence-attachment-att509969023) | **Down** | Walk Backward | [Status: Scalar X: -1.0] \\* | Make the horns gesture  with your thumb curled in, with your knuckle arching up and the tip pressing towards middle of your middle finger. This direction is not used often as it is a fatiguing pose for the thumb. |\n| ![grab.png](atlas-asset://confluence-attachment-att509969029) | **Grip** | GripClick | [Status: Toggle] | Make a finger gun pose with your thumb pointing upwards and your middle, ring and little fingers curled. NOTE: Don’t squeeze too hard to avoid overdriving the glove sensors.  TIP: Set this to “ Use As Toggle Button” to hold object in hand and activate them using LT .  INFO: Practice using the grip button in toggle mode when climbing walls or up other climbable surfaces. It can take some getting used to. |\n| ![trigger.png](atlas-asset://confluence-attachment-att509969035) | **LT** | TriggerClick | [Status: Scalar: 1.0] \\* | Point gesture with thumb pointing upwards. Fully curl in your index finger, as if you were pulling a real trigger. NOTE: Avoid squeezing your index finger too hard as it will make it harder to repeat the gesture.  TIP: Set this to “ Use As Trigger” to activate held objects or click UI elements. |\n| ![primary-a.png](atlas-asset://confluence-attachment-att509969041) | **A Button** | AClick | [Status: Single] | Touch your middle finger to your thumb, with your thumb resting on the middle part of your middle finger. Keep your other fingers extended. INFO: This button activates slow-motion. |\n| ![secondary-b.png](atlas-asset://confluence-attachment-att509969047) | **B Button** | BClick | [Status: LONG PRESS] | Touch your ring finger to your thumb, with your thumb resting on the middle part of your ring finger. Keep your other fingers extended. TIP: Hold this gesture to toggle the Boneworks quick menu on/off  INFO: Use this button to manage inventory slots. |\n\n### Right Hand\n\nThe right hand is used for interaction and selecting UI elements with a laser pointer.\n\n> NOTE: Avoid training joystick directions on the right hand as the default left/right joystick behavior is to activate turning. Instead use your physical body to turn when moving in VRChat. Your head look direction with control the forward direction you will travel during smooth locomotion.\n\n> WARNING: As of StretchSense SteamVR App v0.6.0 only values of 1.0 are outputted for emulated triggers and joysticks.\n\n| **Pose** | **Button Name** | **Action** | **Type** | **Description** |\n| --- | --- | --- | --- | --- |\n| ![interact-idle.png](atlas-asset://confluence-attachment-att509969053) | **Idle** |  |  | Make a relaxed pose and move your fingers between being fully extended to a slightly relaxed curled pose. This represents no buttons being pressed. |\n| ![grab.png](atlas-asset://confluence-attachment-att509969029) | **Grip** | GripClick | [Status: Toggle] | Make a finger gun pose with your thumb pointing upwards and your middle, ring and little fingers curled. NOTE: Don’t squeeze too hard to avoid overdriving the glove sensors.  TIP: Set this to “ Use As Toggle Button” to hold object in hand and activate them using LT .  INFO: Practice using the grip button in toggle mode when climbing walls or up other climbable surfaces. It can take some getting used to. |\n| ![trigger.png](atlas-asset://confluence-attachment-att509969035) | **RT** | TriggerClick | [Status: Scalar: 1.0] \\* | Point gesture with thumb pointing upwards. Fully curl in your index finger, as if you were pulling a real trigger. NOTE: Avoid squeezing your index finger too hard as it will make it harder to repeat the gesture.  TIP: Set this to “ Use As Trigger” to activate held objects or click UI elements. |\n| ![menu.png](atlas-asset://confluence-attachment-att509969081) | **Menu** | Toggle SteamVR Dashboard | [Status: LONG PRESS] | Touch your little finger to your thumb, with your thumb resting on the middle part of your little finger. Keep your other fingers extended. This gesture activates the SteamVR Dashboard. Train it so it can be pressed accurately. You may need to go back and train the idle pose again to stop it accidentally triggering. NOTE: Bind this button in the SteamVR Dashboard Controller Bindings to avoid accidentally activating it. |\n| ![primary-a.png](atlas-asset://confluence-attachment-att509969041) | **A Button** | AClick | [Status: Single] | Touch your middle finger to your thumb, with your thumb resting on the middle part of your middle finger. Keep your other fingers extended. INFO: This button activates slow-motion. |\n| ![secondary-b.png](atlas-asset://confluence-attachment-att509969047) | **B Button** | BClick | [Status: LONG PRESS] | Touch your ring finger to your thumb, with your thumb resting on the middle part of your ring finger. Keep your other fingers extended. TIP: Hold this gesture to toggle the Boneworks quick menu on/off  INFO: Use this button to manage inventory slots. |\n\n# Boneworks Hand Skeleton\n\nThe hand model used in Boneworks is driven by SteamVR button combinations, so movements of your physical hand won’t be represented accurately. v0.6.0 of the StretchSense SteamVR App doesn’t currently support emulation of capacitive touch buttons at this time which restricts the visual animation and movement of both hands.\n\n| **Changelog** | **Version** | **Publish Date (YYYY/MM/DD)** |\n| --- | --- | --- |\n| Initial version. | v1.0.0 | 2024/08/26 |\n",
+    "language": "en"
+  },
+  "source": {
+    "connector": "confluence",
+    "external_id": "509804865",
+    "url": "https://stretchsense.atlassian.net/wiki/spaces/sx/pages/509804865/StretchSense+SteamVR+Boneworks+Guide",
+    "space": "431226936",
+    "parent_external_id": "509247712",
+    "revision": 1
+  },
+  "timestamps": {
+    "created_at": "2024-08-26T04:51:14.260+00:00",
+    "updated_at": "2024-08-26T04:51:29.044+00:00",
+    "ingested_at": "2026-07-22T01:33:22.593178+00:00"
+  },
+  "taxonomy": {
+    "tags": [],
+    "products": [],
+    "audiences": []
+  },
+  "assets": [
+    "confluence-attachment-att509968980",
+    "confluence-attachment-att509968987",
+    "confluence-attachment-att509968993",
+    "confluence-attachment-att509968999",
+    "confluence-attachment-att509969005",
+    "confluence-attachment-att509969011",
+    "confluence-attachment-att509969017",
+    "confluence-attachment-att509969023",
+    "confluence-attachment-att509969029",
+    "confluence-attachment-att509969035",
+    "confluence-attachment-att509969041",
+    "confluence-attachment-att509969047",
+    "confluence-attachment-att509969053",
+    "confluence-attachment-att509969081"
+  ],
+  "relationships": [
+    {
+      "type": "parent",
+      "target_id": "confluence-509247712"
+    }
+  ],
+  "checksums": {
+    "source": "e8202ea550682bc38d8fcdf8ae15b2cdca06483bf657a0d53ad1cd87249f91a3",
+    "content": "dc74ed9b2e8945628e88a787e91d421be59c2d7e60e7313c0040d4dde5bf3b95"
+  },
+  "extensions": {
+    "confluence": {
+      "author_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "owner_id": "62cb6ab310fcc6f7ae3dc6ac",
+      "position": 884,
+      "source_status": "current",
+      "body_representation": "storage",
+      "transform_warnings": []
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att505610254",
+  "filename": "Invalid file id - 7009f235-bdac-4849-9c23-4ec9f0e2cb38",
+  "media_type": "application/octet-stream",
+  "size_bytes": 112461,
+  "sha256": "0bb57f9ccebd90e8afa9376c6da91a5e5052b60b44a1cab585ca107e47afc140",
+  "local_path": "pages/431226993/attachments/att505610254-Invalid file id - 7009f235-bdac-4849-9c23-4ec9f0e2cb38",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att505610254",
+    "container_external_id": "431226993",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=431226993&preview=%2F431226993%2F505610254%2FInvalid+file+id+-+7009f235-bdac-4849-9c23-4ec9f0e2cb38"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}

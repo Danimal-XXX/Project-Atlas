@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "confluence-attachment-att440139806",
+  "filename": "stretchsense-logo.png",
+  "media_type": "image/png",
+  "size_bytes": 39878,
+  "sha256": "85b8618ad419efabab992f75ff66aadf1954f27b81743974360f41367951d736",
+  "local_path": "pages/431226993/attachments/att440139806-stretchsense-logo.png",
+  "source": {
+    "connector": "confluence",
+    "external_id": "att440139806",
+    "container_external_id": "431226993",
+    "url": "https://stretchsense.atlassian.net/pages/viewpageattachments.action?pageId=431226993&preview=%2F431226993%2F440139806%2Fstretchsense-logo.png"
+  },
+  "status": "available",
+  "extensions": {
+    "confluence": {
+      "version": 1,
+      "comment": ""
+    }
+  }
+}
