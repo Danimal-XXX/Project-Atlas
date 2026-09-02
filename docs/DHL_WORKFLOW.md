@@ -18,6 +18,13 @@ The DHL account number and API credentials belong in local environment variables
 or an approved secret manager. They must not be committed, written to reports, or
 included in approval snapshots.
 
+For RMA returns, Atlas normally defaults both freight and duties/taxes to the
+approved StretchSense DHL account and uses DDP. Explicitly reviewed exceptions
+may use another billing arrangement and Incoterm. A one-glove RMA defaults to
+20 x 15 x 10 cm when dimensions are absent. An unknown glove return is described as
+`faulty Motion capture glove`; model, hand and size remain separate traceability
+details when known.
+
 Production is structurally blocked in the current code even if the environment
 flag is changed. Removing that block requires a reviewed code change after the
 durable approval ledger and production-readiness controls are complete.

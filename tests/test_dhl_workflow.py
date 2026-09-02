@@ -44,6 +44,7 @@ def valid_draft(*, pickup_requested: bool = False) -> dict[str, Any]:
         "rma_number": "RMA-12895",
         "reason": "Evaluation return",
         "billing_account_ref": "stretchsense-nz-primary",
+        "billing_charges": ["freight", "duties_taxes"],
         "sender": {
             "company_name": "Example Customer",
             "contact_name": "Test Sender",
@@ -81,7 +82,7 @@ def valid_draft(*, pickup_requested: bool = False) -> dict[str, Any]:
         "customs": {
             "declarable": True,
             "currency": "USD",
-            "incoterm": "DAP",
+            "incoterm": "DDP",
             "invoice_type": "proforma",
             "export_reason_type": "return",
             "export_reason": "Faulty - return for repair/assessment",
@@ -227,6 +228,44 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasValidationError, "sender_to_arrange_pickup"):
             self.validator.validate_object(draft, "shipment-draft.schema.json")
 
+    def test_single_glove_rma_defaults_dimensions_description_and_billing(self) -> None:
+        draft = valid_draft()
+        draft.pop("billing_charges")
+        draft["customs"].pop("incoterm")
+        draft["customs"]["line_items"][0].pop("description")
+        for field in ("length_cm", "width_cm", "height_cm"):
+            draft["packages"][0].pop(field)
+
+        normalised = ShipmentWorkflow().validate_draft(draft)
+
+        self.assertEqual(normalised["billing_charges"], ["freight", "duties_taxes"])
+        self.assertEqual(normalised["customs"]["incoterm"], "DDP")
+        self.assertEqual(
+            normalised["customs"]["line_items"][0]["description"],
+            "faulty Motion capture glove",
+        )
+        self.assertEqual(
+            {
+                field: normalised["packages"][0][field]
+                for field in ("length_cm", "width_cm", "height_cm")
+            },
+            {"length_cm": 20, "width_cm": 15, "height_cm": 10},
+        )
+
+    def test_duties_taxes_billing_requires_ddp(self) -> None:
+        draft = valid_draft()
+        draft["customs"]["incoterm"] = "DAP"
+        with self.assertRaisesRegex(AtlasValidationError, "DDP"):
+            ShipmentWorkflow().validate_draft(draft)
+
+    def test_explicit_freight_only_rma_preserves_dap_exception(self) -> None:
+        draft = valid_draft()
+        draft["billing_charges"] = ["freight"]
+        draft["customs"]["incoterm"] = "DAP"
+        normalised = ShipmentWorkflow().validate_draft(draft)
+        self.assertEqual(normalised["billing_charges"], ["freight"])
+        self.assertEqual(normalised["customs"]["incoterm"], "DAP")
+
 
 class MyDHLMapperTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -255,6 +294,13 @@ class MyDHLMapperTests(unittest.TestCase):
             invoice_date="2026-09-02",
         )
         self.assertEqual(request["pickup"], {"isRequested": False})
+        self.assertEqual(
+            request["accounts"],
+            [
+                {"typeCode": "shipper", "number": "test-account"},
+                {"typeCode": "duties-taxes", "number": "test-account"},
+            ],
+        )
         output_options = request["outputImageProperties"]
         label_option = output_options["imageOptions"][0]
         invoice_option = output_options["imageOptions"][2]

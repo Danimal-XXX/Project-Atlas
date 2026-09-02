@@ -86,7 +86,7 @@ class MyDHLMapper:
             "pickup": {"isRequested": False},
             "productCode": selected_product,
             "getRateEstimates": False,
-            "accounts": [self._shipper_account(account_number)],
+            "accounts": self._billing_accounts(validated, account_number),
             "outputImageProperties": self._document_options(validated),
             "customerDetails": {
                 "shipperDetails": self._shipment_party(validated["sender"]),
@@ -129,6 +129,20 @@ class MyDHLMapper:
             "typeCode": "shipper",
             "number": MyDHLMapper._required_text(account_number, "account number"),
         }
+
+    @staticmethod
+    def _billing_accounts(
+        draft: Mapping[str, Any], account_number: str
+    ) -> list[dict[str, str]]:
+        number = MyDHLMapper._required_text(account_number, "account number")
+        role_map = {
+            "freight": "shipper",
+            "duties_taxes": "duties-taxes",
+        }
+        return [
+            {"typeCode": role_map[charge], "number": number}
+            for charge in draft["billing_charges"]
+        ]
 
     @staticmethod
     def _rate_address(party: Mapping[str, Any]) -> dict[str, Any]:

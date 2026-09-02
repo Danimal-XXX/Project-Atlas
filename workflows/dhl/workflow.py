@@ -17,6 +17,13 @@ RMA_SHIPMENT_TYPES = {"rma_return", "warranty_return", "paid_repair", "evaluatio
 RMA_EXPORT_REASON = "Faulty - return for repair/assessment"
 RMA_VALUATION_NOTE = "NO COMMERCIAL VALUE - Value for customs purposes only"
 RMA_DEFAULT_UNIT_VALUE_USD = 50.0
+RMA_DEFAULT_BILLING_CHARGES = ["freight", "duties_taxes"]
+SINGLE_GLOVE_RMA_DIMENSIONS_CM = {
+    "length_cm": 20,
+    "width_cm": 15,
+    "height_cm": 10,
+}
+UNKNOWN_GLOVE_RETURN_DESCRIPTION = "faulty Motion capture glove"
 
 
 @dataclass(frozen=True)
@@ -47,14 +54,19 @@ class ShipmentWorkflow:
         if not isinstance(draft, Mapping):
             return draft
         normalised = deepcopy(dict(draft))
+        has_explicit_billing_charges = "billing_charges" in normalised
         normalised.setdefault("collection_arrangement", "sender_to_arrange_pickup")
         normalised.setdefault("pickup_requested", False)
+        normalised.setdefault("billing_charges", ["freight"])
         if normalised.get("shipment_type") not in RMA_SHIPMENT_TYPES:
             return normalised
+        if not has_explicit_billing_charges:
+            normalised["billing_charges"] = deepcopy(RMA_DEFAULT_BILLING_CHARGES)
         customs = normalised.get("customs")
         if not isinstance(customs, dict):
             return normalised
         customs.setdefault("currency", "USD")
+        customs.setdefault("incoterm", "DDP")
         customs.setdefault("invoice_type", "proforma")
         customs.setdefault("export_reason_type", "return")
         customs.setdefault("export_reason", RMA_EXPORT_REASON)
@@ -65,6 +77,29 @@ class ShipmentWorkflow:
             for line_item in line_items:
                 if isinstance(line_item, dict):
                     line_item.setdefault("unit_value", RMA_DEFAULT_UNIT_VALUE_USD)
+            is_single_glove = (
+                len(line_items) == 1
+                and isinstance(line_items[0], dict)
+                and line_items[0].get("quantity") == 1
+                and "glove" in " ".join(
+                    str(line_items[0].get(field, ""))
+                    for field in ("product_ref", "description")
+                ).lower()
+            )
+            if is_single_glove:
+                line_items[0].setdefault("product_ref", "FAULTY-MOCAP-GLOVE")
+                line_items[0].setdefault(
+                    "description", UNKNOWN_GLOVE_RETURN_DESCRIPTION
+                )
+                packages = normalised.get("packages")
+                if isinstance(packages, list) and len(packages) == 1:
+                    package = packages[0]
+                    if isinstance(package, dict):
+                        package.setdefault(
+                            "description", UNKNOWN_GLOVE_RETURN_DESCRIPTION
+                        )
+                        for field, value in SINGLE_GLOVE_RMA_DIMENSIONS_CM.items():
+                            package.setdefault(field, value)
         return normalised
 
     def prepare(

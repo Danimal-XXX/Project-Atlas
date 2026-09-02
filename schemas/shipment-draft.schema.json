@@ -10,6 +10,7 @@
     "id",
     "shipment_type",
     "billing_account_ref",
+    "billing_charges",
     "sender",
     "recipient",
     "packages",
@@ -30,6 +31,13 @@
       "type": "string",
       "minLength": 1,
       "description": "Logical Atlas account reference, never a credential or DHL account number."
+    },
+    "billing_charges": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["freight", "duties_taxes"]},
+      "description": "Charge classes billed to the single logical DHL account reference."
     },
     "sender": {"$ref": "#/$defs/party"},
     "recipient": {"$ref": "#/$defs/party"},
@@ -52,6 +60,22 @@
     },
     "extensions": {"type": "object", "additionalProperties": true, "default": {}}
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "billing_charges": {"contains": {"const": "duties_taxes"}}
+        }
+      },
+      "then": {
+        "properties": {
+          "customs": {
+            "properties": {"incoterm": {"const": "DDP"}}
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "party": {
       "type": "object",
