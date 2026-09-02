@@ -166,6 +166,18 @@ class MyDHLClient:
             raise MyDHLAPIError(f"MyDHL returned invalid JSON for {path}") from error
         if not isinstance(payload, dict):
             raise MyDHLAPIError(f"MyDHL returned a non-object response for {path}")
+        application_status = payload.get("status")
+        try:
+            is_problem = int(application_status) >= 400
+        except (TypeError, ValueError):
+            is_problem = False
+        if is_problem:
+            details = payload.get("additionalDetails") or payload.get("detail")
+            raise MyDHLAPIError(
+                self._redact(
+                    f"MyDHL validation failed with status {application_status}: {details}"
+                )
+            )
         return payload
 
     def _request(

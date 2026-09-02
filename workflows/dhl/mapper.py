@@ -197,11 +197,12 @@ class MyDHLMapper:
         image_options: list[dict[str, Any]] = [
             {
                 "typeCode": "label",
-                "templateName": "ECOM26_84_A4_001",
-                "fitLabelsToA4": True,
+                "templateName": "ECOM26_84_001",
+                "fitLabelsToA4": False,
             },
             {
                 "typeCode": "waybillDoc",
+                "templateName": "ARCH_8X4",
                 "isRequested": True,
                 "hideAccountNumber": True,
                 "numberOfCopies": 1,
@@ -224,6 +225,11 @@ class MyDHLMapper:
             "printerDPI": 300,
             "encodingFormat": "pdf",
             "imageOptions": image_options,
+            "splitTransportAndWaybillDocLabels": True,
+            "allDocumentsInOneImage": False,
+            "splitDocumentsByPages": False,
+            "splitInvoiceAndReceipt": True,
+            "receiptAndLabelsInOneImage": False,
         }
 
     @staticmethod

@@ -61,6 +61,10 @@ appear in a transient rate response, but the mapper will reject it for shipment
 creation. Standard international test shipments use product `P` (Express
 Worldwide) unless another approved service is selected.
 
+PDF output uses DHL's default `ECOM26_84_001` transport label and `ARCH_8X4`
+waybill templates. Labels, waybills and the landscape returns invoice are
+returned as separate document images to avoid incompatible printable widths.
+
 Approval records contain hashes of the validated Atlas draft and exact MyDHL
 payload, not duplicated addresses, contact details or DHL account numbers.
 

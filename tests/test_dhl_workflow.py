@@ -199,8 +199,14 @@ class MyDHLMapperTests(unittest.TestCase):
             invoice_date="2026-09-02",
         )
         self.assertEqual(request["pickup"], {"isRequested": False})
-        invoice_option = request["outputImageProperties"]["imageOptions"][2]
+        output_options = request["outputImageProperties"]
+        label_option = output_options["imageOptions"][0]
+        invoice_option = output_options["imageOptions"][2]
+        self.assertEqual(label_option["templateName"], "ECOM26_84_001")
+        self.assertIs(label_option["fitLabelsToA4"], False)
         self.assertEqual(invoice_option["templateName"], "RET_COM_INVOICE_A4_01")
+        self.assertIs(output_options["allDocumentsInOneImage"], False)
+        self.assertIs(output_options["splitInvoiceAndReceipt"], True)
         declaration = request["content"]["exportDeclaration"]
         self.assertEqual(declaration["exportReasonType"], "return")
         self.assertEqual(
@@ -447,6 +453,26 @@ class MyDHLClientTests(unittest.TestCase):
         self.assertEqual(result["status"], "valid")
         self.assertEqual(session.calls[0]["params"], {"validateDataOnly": "true"})
         self.assertEqual(session.calls[0]["url"], f"{TEST_BASE_URL}/shipments")
+
+    def test_validation_problem_in_http_success_is_rejected(self) -> None:
+        session = FakeSession(
+            [
+                FakeResponse(
+                    {
+                        "status": "400",
+                        "title": "Bad request",
+                        "detail": "Shipment data is invalid",
+                    }
+                )
+            ]
+        )
+        prepared = ShipmentWorkflow().prepare(
+            draft=valid_draft(),
+            dhl_payload={"shipment": "payload", "pickup": {"isRequested": False}},
+            operation="create_shipment",
+        )
+        with self.assertRaisesRegex(MyDHLAPIError, "status 400"):
+            self._client(session).validate_shipment(prepared)
 
     def test_unknown_write_outcome_is_never_retried(self) -> None:
         session = FakeSession([requests.ConnectionError("connection lost")])
