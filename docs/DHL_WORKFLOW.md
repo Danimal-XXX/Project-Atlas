@@ -41,6 +41,17 @@ creation always sends `pickup.isRequested=false`, and customer-facing hand-offs
 must state that the sender arranges collection directly with DHL. Atlas may book
 a pickup only as a separate operation with a separate explicit approval.
 
+RMA customs defaults are a pro forma invoice, export reason `Faulty - return
+for repair/assessment`, `NO COMMERCIAL VALUE`, and the note `Value for customs
+purposes only`. Each returned product/unit defaults to a customs value of USD
+50. Any exception remains visible in the frozen review payload and requires a
+new explicit approval.
+
+MyDHL limits its printable export-reason field to 30 characters. Atlas maps the
+approved full wording to `Faulty - repair/assessment` in that field and retains
+`Faulty - return for repair/assessment` in the line-item customs detail. The
+invoice separately prints the export type as `RETURN`.
+
 ## Current implementation
 
 ```text

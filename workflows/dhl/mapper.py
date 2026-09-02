@@ -6,7 +6,10 @@ from collections.abc import Mapping
 from datetime import date
 from typing import Any
 
-from workflows.dhl.workflow import ShipmentWorkflow
+from workflows.dhl.workflow import RMA_EXPORT_REASON, ShipmentWorkflow
+
+
+DHL_RMA_EXPORT_REASON = "Faulty - repair/assessment"
 
 
 class MyDHLMappingError(ValueError):
@@ -240,10 +243,22 @@ class MyDHLMapper:
         export_reason = customs["export_reason_type"]
         line_items = []
         for number, item in enumerate(customs["line_items"], start=1):
-            line_items.append(
-                {
+            description = item["description"]
+            additional_information = []
+            if customs["commercial_value_status"] == "no_commercial_value":
+                if "NO COMMERCIAL VALUE" not in description.upper():
+                    description += " - NO COMMERCIAL VALUE"
+                additional_information.append(
+                    customs.get(
+                        "valuation_note",
+                        "NO COMMERCIAL VALUE - Value for customs purposes only",
+                    )
+                )
+            if customs["export_reason"] == RMA_EXPORT_REASON:
+                additional_information.append(RMA_EXPORT_REASON)
+            mapped_item = {
                     "number": number,
-                    "description": item["description"],
+                    "description": description,
                     "price": item["unit_value"],
                     "quantity": {
                         "value": item["quantity"],
@@ -259,7 +274,9 @@ class MyDHLMapper:
                         {"typeCode": "AFE", "value": item["product_ref"]}
                     ],
                 }
-            )
+            if additional_information:
+                mapped_item["additionalInformation"] = additional_information
+            line_items.append(mapped_item)
         invoice: dict[str, Any] = {
             "number": invoice_number,
             "date": invoice_date,
@@ -277,11 +294,22 @@ class MyDHLMapper:
         declaration: dict[str, Any] = {
             "lineItems": line_items,
             "invoice": invoice,
+            "exportReason": MyDHLMapper._export_reason(customs["export_reason"]),
             "exportReasonType": export_reason,
         }
         if customs.get("original_export_reference"):
             declaration["exportReference"] = customs["original_export_reference"]
         return declaration
+
+    @staticmethod
+    def _export_reason(value: str) -> str:
+        if value == RMA_EXPORT_REASON:
+            return DHL_RMA_EXPORT_REASON
+        if len(value) > 30:
+            raise MyDHLMappingError(
+                "DHL export reason must not exceed 30 characters"
+            )
+        return value
 
     @staticmethod
     def _declared_value(draft: Mapping[str, Any]) -> float:

@@ -75,14 +75,17 @@ def valid_draft(*, pickup_requested: bool = False) -> dict[str, Any]:
             "declarable": True,
             "currency": "USD",
             "incoterm": "DAP",
-            "invoice_type": "return",
+            "invoice_type": "proforma",
             "export_reason_type": "return",
+            "export_reason": "Faulty - return for repair/assessment",
+            "commercial_value_status": "no_commercial_value",
+            "valuation_note": "NO COMMERCIAL VALUE - Value for customs purposes only",
             "line_items": [
                 {
                     "product_ref": "TEST-GLOVE",
                     "description": "Wearable motion capture gloves",
                     "quantity": 1,
-                    "unit_value": 100,
+                    "unit_value": 50,
                     "hs_code": "9504500000",
                     "country_of_origin": "CN",
                     "net_weight_kg": 0.8,
@@ -149,10 +152,28 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
 
     def test_valid_return_draft_passes(self) -> None:
         draft = valid_draft()
-        self.assertIs(
+        self.assertEqual(
             self.validator.validate_object(draft, "shipment-draft.schema.json"),
             draft,
         )
+
+    def test_rma_customs_defaults_are_applied_per_unit(self) -> None:
+        draft = valid_draft()
+        for field in (
+            "currency",
+            "invoice_type",
+            "export_reason_type",
+            "export_reason",
+            "commercial_value_status",
+            "valuation_note",
+        ):
+            del draft["customs"][field]
+        del draft["customs"]["line_items"][0]["unit_value"]
+        normalised = ShipmentWorkflow().validate_draft(draft)
+        self.assertEqual(normalised["customs"]["invoice_type"], "proforma")
+        self.assertEqual(normalised["customs"]["export_reason"], "Faulty - return for repair/assessment")
+        self.assertEqual(normalised["customs"]["commercial_value_status"], "no_commercial_value")
+        self.assertEqual(normalised["customs"]["line_items"][0]["unit_value"], 50.0)
 
     def test_invalid_hs_code_is_rejected(self) -> None:
         draft = valid_draft()
@@ -194,7 +215,7 @@ class MyDHLMapperTests(unittest.TestCase):
             request["customerDetails"]["shipperDetails"]["provinceCode"], "CA"
         )
         self.assertEqual(request["packages"][0]["weight"], 1.2)
-        self.assertEqual(request["monetaryAmount"][0]["value"], 100)
+        self.assertEqual(request["monetaryAmount"][0]["value"], 50)
 
     def test_return_shipment_forces_no_pickup_and_return_documents(self) -> None:
         request = self.mapper.build_shipment_request(
@@ -211,11 +232,24 @@ class MyDHLMapperTests(unittest.TestCase):
         invoice_option = output_options["imageOptions"][2]
         self.assertEqual(label_option["templateName"], "ECOM26_84_001")
         self.assertIs(label_option["fitLabelsToA4"], False)
-        self.assertEqual(invoice_option["templateName"], "RET_COM_INVOICE_A4_01")
+        self.assertEqual(invoice_option["invoiceType"], "proforma")
+        self.assertNotIn("templateName", invoice_option)
         self.assertIs(output_options["allDocumentsInOneImage"], False)
         self.assertIs(output_options["splitInvoiceAndReceipt"], True)
         declaration = request["content"]["exportDeclaration"]
         self.assertEqual(declaration["exportReasonType"], "return")
+        self.assertEqual(
+            declaration["exportReason"], "Faulty - repair/assessment"
+        )
+        self.assertIn(
+            "NO COMMERCIAL VALUE",
+            declaration["lineItems"][0]["description"],
+        )
+        self.assertEqual(declaration["lineItems"][0]["price"], 50)
+        self.assertIn(
+            "Faulty - return for repair/assessment",
+            declaration["lineItems"][0]["additionalInformation"],
+        )
         self.assertEqual(
             declaration["invoice"]["customerReferences"][0]["typeCode"], "RMA"
         )

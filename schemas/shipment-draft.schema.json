@@ -100,6 +100,12 @@
         "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
         "incoterm": {"type": "string", "minLength": 3},
         "invoice_type": {"type": "string", "enum": ["commercial", "proforma", "return"]},
+        "export_reason": {"type": "string", "minLength": 1},
+        "commercial_value_status": {
+          "type": "string",
+          "enum": ["commercial_value", "no_commercial_value"]
+        },
+        "valuation_note": {"type": "string", "minLength": 1},
         "export_reason_type": {
           "type": "string",
           "enum": [
@@ -129,7 +135,7 @@
         {
           "if": {"properties": {"declarable": {"const": true}}},
           "then": {
-            "required": ["invoice_type", "export_reason_type"],
+            "required": ["invoice_type", "export_reason_type", "export_reason", "commercial_value_status"],
             "properties": {"line_items": {"minItems": 1}}
           }
         }
