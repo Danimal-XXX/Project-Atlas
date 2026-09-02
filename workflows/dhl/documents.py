@@ -103,6 +103,7 @@ def build_outlook_draft_manifest(
     return {
         "operation": "create_draft",
         "send": False,
+        "collection_instruction": "Sender to arrange pickup",
         "mailbox": mailbox.strip(),
         "to": [address.strip() for address in to],
         "subject": subject.strip(),

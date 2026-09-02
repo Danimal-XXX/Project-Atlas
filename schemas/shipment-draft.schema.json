@@ -14,6 +14,7 @@
     "recipient",
     "packages",
     "customs",
+    "collection_arrangement",
     "pickup_requested"
   ],
   "properties": {
@@ -38,6 +39,10 @@
       "items": {"$ref": "#/$defs/package"}
     },
     "customs": {"$ref": "#/$defs/customs"},
+    "collection_arrangement": {
+      "const": "sender_to_arrange_pickup",
+      "description": "Default hand-off rule. The sender arranges collection directly with DHL; Atlas does not book it as part of shipment creation."
+    },
     "pickup_requested": {"type": "boolean"},
     "customer_references": {
       "type": "array",

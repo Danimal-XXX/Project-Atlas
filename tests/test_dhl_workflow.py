@@ -89,6 +89,7 @@ def valid_draft(*, pickup_requested: bool = False) -> dict[str, Any]:
                 }
             ],
         },
+        "collection_arrangement": "sender_to_arrange_pickup",
         "pickup_requested": pickup_requested,
     }
 
@@ -169,6 +170,12 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
         draft = valid_draft()
         del draft["customs"]["line_items"][0]["net_weight_kg"]
         with self.assertRaisesRegex(AtlasValidationError, "net_weight_kg"):
+            self.validator.validate_object(draft, "shipment-draft.schema.json")
+
+    def test_collection_must_be_arranged_by_sender(self) -> None:
+        draft = valid_draft()
+        draft["collection_arrangement"] = "atlas_to_book_pickup"
+        with self.assertRaisesRegex(AtlasValidationError, "sender_to_arrange_pickup"):
             self.validator.validate_object(draft, "shipment-draft.schema.json")
 
 
@@ -289,6 +296,9 @@ class ShipmentDocumentTests(unittest.TestCase):
         )
         self.assertEqual(manifest["operation"], "create_draft")
         self.assertIs(manifest["send"], False)
+        self.assertEqual(
+            manifest["collection_instruction"], "Sender to arrange pickup"
+        )
         self.assertEqual(manifest["attachments"][0]["size_bytes"], 8)
 
     def test_invalid_base64_is_rejected(self) -> None:

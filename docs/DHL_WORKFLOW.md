@@ -36,6 +36,11 @@ The workflow will support:
 8. A separate approval for pickup creation, if required.
 9. An Outlook draft hand-off with attachments and no automatic send operation.
 
+The default collection instruction is **Sender to arrange pickup**. Shipment
+creation always sends `pickup.isRequested=false`, and customer-facing hand-offs
+must state that the sender arranges collection directly with DHL. Atlas may book
+a pickup only as a separate operation with a separate explicit approval.
+
 ## Current implementation
 
 ```text
