@@ -56,6 +56,11 @@ objects and separate approvals. Write requests are never automatically retried:
 if a connection fails after submission, the outcome is treated as unknown and
 must be reconciled before another attempt.
 
+DHL product `Q` (Medical Express) is prohibited by StretchSense policy. It may
+appear in a transient rate response, but the mapper will reject it for shipment
+creation. Standard international test shipments use product `P` (Express
+Worldwide) unless another approved service is selected.
+
 Approval records contain hashes of the validated Atlas draft and exact MyDHL
 payload, not duplicated addresses, contact details or DHL account numbers.
 

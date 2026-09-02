@@ -16,6 +16,8 @@ class MyDHLMappingError(ValueError):
 class MyDHLMapper:
     """Build MyDHL v3.3 request objects without retaining credentials or rates."""
 
+    PROHIBITED_PRODUCT_CODES = {"Q"}
+
     def __init__(self, workflow: ShipmentWorkflow | None = None) -> None:
         self.workflow = workflow or ShipmentWorkflow()
 
@@ -67,12 +69,19 @@ class MyDHLMapper:
             )
         customs = validated["customs"]
         declarable = customs["declarable"]
+        selected_product = self._required_text(
+            product_code, "product code", max_length=6
+        ).upper()
+        if selected_product in self.PROHIBITED_PRODUCT_CODES:
+            raise MyDHLMappingError(
+                "DHL product Q (Medical Express) is prohibited by StretchSense policy"
+            )
         request: dict[str, Any] = {
             "plannedShippingDateAndTime": self._required_text(
                 planned_shipping_date_and_time, "planned shipping date and time"
             ),
             "pickup": {"isRequested": False},
-            "productCode": self._required_text(product_code, "product code", max_length=6),
+            "productCode": selected_product,
             "getRateEstimates": False,
             "accounts": [self._shipper_account(account_number)],
             "outputImageProperties": self._document_options(validated),

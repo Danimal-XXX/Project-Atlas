@@ -216,6 +216,17 @@ class MyDHLMapperTests(unittest.TestCase):
                 account_number="test-account",
             )
 
+    def test_medical_express_is_prohibited(self) -> None:
+        with self.assertRaisesRegex(MyDHLMappingError, "Medical Express"):
+            self.mapper.build_shipment_request(
+                valid_draft(),
+                planned_shipping_date_and_time="2026-09-03T09:00:00 GMT+12:00",
+                product_code="Q",
+                account_number="test-account",
+                invoice_number="RMA-12895",
+                invoice_date="2026-09-02",
+            )
+
 
 class DHLConfigurationTests(unittest.TestCase):
     def test_test_is_the_default_safe_environment(self) -> None:
