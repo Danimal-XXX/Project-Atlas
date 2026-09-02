@@ -11,6 +11,8 @@ from typing import Any
 
 
 MAX_OUTLOOK_ATTACHMENT_BYTES = 3 * 1024 * 1024
+DEFAULT_DRAFT_SENDER_NAME = "Dan Walker"
+DEFAULT_DRAFT_COMPANY_NAME = "StretchSense"
 FORMAT_DETAILS = {
     "PDF": ("pdf", "application/pdf"),
     "PNG": ("png", "image/png"),
@@ -92,10 +94,14 @@ def build_outlook_draft_manifest(
     subject: str,
     body: str,
     documents: Sequence[ShipmentDocument],
+    sender_name: str = DEFAULT_DRAFT_SENDER_NAME,
+    company_name: str = DEFAULT_DRAFT_COMPANY_NAME,
 ) -> dict[str, Any]:
     """Create a hand-off manifest that permits draft creation but never sending."""
     if not mailbox.strip() or not subject.strip() or not body.strip():
         raise ValueError("Mailbox, subject and body are required")
+    if not sender_name.strip() or not company_name.strip():
+        raise ValueError("Sender name and company name are required")
     if not to or any(not isinstance(address, str) or not address.strip() for address in to):
         raise ValueError("At least one verified recipient is required")
     if not documents:
@@ -107,7 +113,7 @@ def build_outlook_draft_manifest(
         "mailbox": mailbox.strip(),
         "to": [address.strip() for address in to],
         "subject": subject.strip(),
-        "body": body,
+        "body": _with_sender_signature(body, sender_name, company_name),
         "attachments": [
             {
                 "filename": document.filename,
@@ -117,6 +123,15 @@ def build_outlook_draft_manifest(
             for document in documents
         ],
     }
+
+
+def _with_sender_signature(body: str, sender_name: str, company_name: str) -> str:
+    """Append the controlled two-line sender signature to a draft body."""
+    signature = f"{sender_name.strip()}\n{company_name.strip()}"
+    message = body.rstrip()
+    if message.endswith(signature):
+        return message
+    return f"{message}\n\n{signature}"
 
 
 def _safe_name(value: Any, fallback: str) -> str:

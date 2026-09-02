@@ -128,5 +128,9 @@ ledger have been verified.
 - Approval expiry and any permitted rate-variance threshold.
 - Outlook subject/body template, mailbox and attachment naming convention.
 
+Atlas-generated Outlook hand-offs use a controlled two-line sender signature:
+the sender's name on the first line and the company name on the second. The
+current defaults are `Dan Walker` and `StretchSense`.
+
 Historical shipping documents are not approved master data. Conflicting GST,
 VAT, address and tariff values must remain quarantined until verified.

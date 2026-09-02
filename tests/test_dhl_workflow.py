@@ -18,6 +18,7 @@ from workflows.dhl.config import (
 from workflows.dhl.controls import ApprovalGuard, ApprovalRejected
 from workflows.dhl.documents import (
     MAX_OUTLOOK_ATTACHMENT_BYTES,
+    ShipmentDocument,
     ShipmentDocumentError,
     build_outlook_draft_manifest,
     extract_shipment_documents,
@@ -333,7 +334,29 @@ class ShipmentDocumentTests(unittest.TestCase):
         self.assertEqual(
             manifest["collection_instruction"], "Sender to arrange pickup"
         )
+        self.assertTrue(manifest["body"].endswith("Dan Walker\nStretchSense"))
         self.assertEqual(manifest["attachments"][0]["size_bytes"], 8)
+
+    def test_outlook_handoff_uses_explicit_two_line_sender_signature(self) -> None:
+        document = ShipmentDocument(
+            filename="DHL-TEST-label-1.pdf",
+            mime_type="application/pdf",
+            content=b"test-pdf",
+            type_code="label",
+        )
+        manifest = build_outlook_draft_manifest(
+            mailbox="returns@example.com",
+            to=["customer@example.com"],
+            subject="Your DHL return label",
+            body="Please find your return label attached.",
+            documents=[document],
+            sender_name="Dan Walker",
+            company_name="StretchSense",
+        )
+        self.assertEqual(
+            manifest["body"],
+            "Please find your return label attached.\n\nDan Walker\nStretchSense",
+        )
 
     def test_invalid_base64_is_rejected(self) -> None:
         with self.assertRaisesRegex(ShipmentDocumentError, "valid base64"):
