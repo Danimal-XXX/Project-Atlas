@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-atlas.local/schemas/rma-email-review.schema.json",
+  "title": "Atlas Outlook RMA Intake Review",
+  "description": "Review-only hand-off from one explicitly selected Outlook message to a candidate DHL RMA shipment draft.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "operation",
+    "status",
+    "source",
+    "proposed_draft",
+    "draft_sha256",
+    "missing_fields",
+    "validation_errors",
+    "dhl_request_made",
+    "shipment_created",
+    "pickup_created"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "minLength": 1},
+    "operation": {"const": "prepare_rma_draft"},
+    "status": {"type": "string", "enum": ["needs_review", "ready_for_validation"]},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "selection",
+        "trigger_category",
+        "message_id",
+        "subject",
+        "from_email",
+        "received_at",
+        "source_sha256"
+      ],
+      "properties": {
+        "provider": {"const": "outlook"},
+        "selection": {"const": "explicit"},
+        "trigger_category": {"const": "Create DHL RMA"},
+        "message_id": {"type": "string", "minLength": 1},
+        "conversation_id": {"type": ["string", "null"]},
+        "internet_message_id": {"type": ["string", "null"]},
+        "subject": {"type": "string", "minLength": 1},
+        "from_name": {"type": ["string", "null"]},
+        "from_email": {"type": "string", "format": "email"},
+        "received_at": {"type": "string", "format": "date-time"},
+        "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "proposed_draft": {"type": "object"},
+    "draft_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "missing_fields": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "validation_errors": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "dhl_request_made": {"const": false},
+    "shipment_created": {"const": false},
+    "pickup_created": {"const": false}
+  }
+}

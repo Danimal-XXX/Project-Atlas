@@ -195,6 +195,11 @@ See `docs/DHL_WORKFLOW.md` for configuration, safety boundaries, the MyDHL v3.3
 request mapper, safe test preflight and remaining master-data requirements. No
 DHL credentials or account numbers are stored in the repository.
 
+Outlook RMA intake uses the explicit `Create DHL RMA` message category. It
+creates a review-only candidate, reports missing fields and retains only a
+source fingerprint rather than the raw email body. The category can never
+create a DHL shipment, label, pickup or charge by itself.
+
 ---
 
 # Roadmap

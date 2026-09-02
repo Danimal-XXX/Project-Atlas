@@ -57,13 +57,53 @@ invoice separately prints the export type as `RETURN`.
 ```text
 schemas/shipment-draft.schema.json       Carrier-neutral shipment input
 schemas/shipment-approval.schema.json    Exact one-use operation approval
+schemas/rma-email-review.schema.json     Review-only Outlook intake contract
 workflows/dhl/config.py                  Test/production configuration gate
 workflows/dhl/workflow.py                Validation and frozen request snapshot
 workflows/dhl/controls.py                Canonical hash and approval consumption
 workflows/dhl/mapper.py                  Atlas-to-MyDHL v3.3 request mapping
 workflows/dhl/client.py                  MyDHL HTTP boundary
 workflows/dhl/documents.py               Document decoding and draft-only manifest
+workflows/dhl/outlook_intake.py          Explicit email-to-RMA review boundary
 tests/test_dhl_workflow.py               Offline safety and contract tests
+```
+
+## Outlook-to-RMA intake
+
+The reusable Outlook trigger is the exact category **Create DHL RMA**. Atlas
+accepts only one explicitly categorised message at a time; it does not scan or
+monitor the inbox. The Outlook connector or operator supplies that message and
+an extracted candidate shipment draft to `build_outlook_rma_review()`.
+
+The intake step:
+
+1. verifies the Outlook message ID, sender, subject and received timestamp;
+2. fingerprints the source, including a hash of its body, without copying the
+   raw email body into the review manifest;
+3. applies the controlled RMA and collection defaults;
+4. identifies missing shipment, address, package and customs fields;
+5. validates a complete candidate against `shipment-draft.schema.json`; and
+6. returns a schema-valid review manifest with every DHL/write flag set to
+   `false`.
+
+A `ready_for_validation` result is not shipment approval. The unchanged
+candidate must first pass `confirm_outlook_rma_review()`, then proceed through
+the existing DHL serviceability, rating, preflight, frozen-payload and explicit
+approval controls. Label generation remains a shipment-creation write and can
+never be triggered solely by an email category.
+
+The intended operator sequence is:
+
+```text
+Apply "Create DHL RMA" category
+  -> fetch that one Outlook message
+  -> extract candidate fields with evidence
+  -> review and complete missing fields
+  -> confirm canonical shipment draft
+  -> DHL validation/rates/preflight
+  -> Dan approves exact payload hash
+  -> create shipment without pickup
+  -> create unsent Outlook reply draft with documents
 ```
 
 The client exposes address validation and rates as non-chargeable preparation

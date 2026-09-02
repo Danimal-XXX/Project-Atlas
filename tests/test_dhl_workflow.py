@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import unittest
+from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -24,6 +25,11 @@ from workflows.dhl.documents import (
     extract_shipment_documents,
 )
 from workflows.dhl.mapper import MyDHLMapper, MyDHLMappingError
+from workflows.dhl.outlook_intake import (
+    OutlookRMAIntakeError,
+    build_outlook_rma_review,
+    confirm_outlook_rma_review,
+)
 from workflows.dhl.workflow import ShipmentWorkflow
 
 
@@ -108,6 +114,27 @@ def approval_for(prepared, *, approval_id: str = "approval-1") -> dict[str, Any]
         "approved_by": "dan.walker",
         "approved_at": NOW.isoformat(),
         "expires_at": (NOW + timedelta(minutes=30)).isoformat(),
+    }
+
+
+def valid_outlook_rma_message(*, categories: list[str] | None = None) -> dict[str, Any]:
+    return {
+        "id": "outlook-message-12895",
+        "conversationId": "outlook-conversation-12895",
+        "internetMessageId": "<rma-12895@example.com>",
+        "subject": "Return request for order 12895",
+        "receivedDateTime": "2026-09-02T00:30:00Z",
+        "categories": categories if categories is not None else ["Create DHL RMA"],
+        "from": {
+            "emailAddress": {
+                "name": "Test Sender",
+                "address": "sender@example.com",
+            }
+        },
+        "body": {
+            "contentType": "text",
+            "content": "Private customer message containing the return request.",
+        },
     }
 
 
@@ -305,6 +332,61 @@ class DHLConfigurationTests(unittest.TestCase):
             DHLConfigurationError, "structurally disabled"
         ):
             config.assert_environment_safe()
+
+
+class OutlookRMAIntakeTests(unittest.TestCase):
+    def test_explicit_outlook_category_is_required(self) -> None:
+        with self.assertRaisesRegex(OutlookRMAIntakeError, "explicitly categorised"):
+            build_outlook_rma_review(
+                message=valid_outlook_rma_message(categories=[]),
+                proposed_draft=valid_draft(),
+            )
+
+    def test_incomplete_extraction_remains_review_only(self) -> None:
+        candidate = valid_draft()
+        del candidate["sender"]["phone"]
+        review = build_outlook_rma_review(
+            message=valid_outlook_rma_message(),
+            proposed_draft=candidate,
+        )
+        self.assertEqual(review["status"], "needs_review")
+        self.assertIn("sender.phone", review["missing_fields"])
+        self.assertIs(review["dhl_request_made"], False)
+        self.assertIs(review["shipment_created"], False)
+        self.assertIs(review["pickup_created"], False)
+        self.assertNotIn("Private customer message", str(review))
+        with self.assertRaisesRegex(OutlookRMAIntakeError, "still needs review"):
+            confirm_outlook_rma_review(review)
+
+    def test_complete_extraction_can_be_confirmed_as_canonical_draft(self) -> None:
+        candidate = valid_draft()
+        del candidate["customs"]["invoice_type"]
+        del candidate["customs"]["line_items"][0]["unit_value"]
+        review = build_outlook_rma_review(
+            message=valid_outlook_rma_message(),
+            proposed_draft=candidate,
+        )
+        self.assertEqual(review["status"], "ready_for_validation")
+        self.assertEqual(review["source"]["selection"], "explicit")
+        self.assertEqual(review["source"]["trigger_category"], "Create DHL RMA")
+        confirmed = confirm_outlook_rma_review(review)
+        self.assertEqual(confirmed["customs"]["invoice_type"], "proforma")
+        self.assertEqual(
+            confirmed["customs"]["line_items"][0]["unit_value"], 50
+        )
+        self.assertIs(confirmed["pickup_requested"], False)
+
+    def test_review_hash_detects_candidate_changes(self) -> None:
+        review = dict(
+            build_outlook_rma_review(
+                message=valid_outlook_rma_message(),
+                proposed_draft=valid_draft(),
+            )
+        )
+        review["proposed_draft"] = deepcopy(review["proposed_draft"])
+        review["proposed_draft"]["sender"]["phone"] = "+1 555 0199"
+        with self.assertRaisesRegex(OutlookRMAIntakeError, "changed after review"):
+            confirm_outlook_rma_review(review)
 
 
 class ShipmentDocumentTests(unittest.TestCase):
