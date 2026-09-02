@@ -67,7 +67,7 @@ schemas/shipment-approval.schema.json    Exact one-use operation approval
 schemas/rma-email-review.schema.json     Review-only Outlook intake contract
 workflows/dhl/config.py                  Test/production configuration gate
 workflows/dhl/workflow.py                Validation and frozen request snapshot
-workflows/dhl/controls.py                Canonical hash and approval consumption
+workflows/dhl/controls.py                Canonical hash and durable approval ledger
 workflows/dhl/mapper.py                  Atlas-to-MyDHL v3.3 request mapping
 workflows/dhl/client.py                  MyDHL HTTP boundary
 workflows/dhl/documents.py               Document decoding and draft-only manifest
@@ -130,6 +130,12 @@ returned as separate document images to avoid incompatible printable widths.
 
 Approval records contain hashes of the validated Atlas draft and exact MyDHL
 payload, not duplicated addresses, contact details or DHL account numbers.
+For operational use, construct `ApprovalGuard` with `SQLiteApprovalLedger` at a
+protected local path. Consumption is committed before network contact and is
+durable across restarts. The ledger uniquely records both approval IDs and exact
+operation/environment/payload hashes, preventing a second approval ID from
+silently resubmitting the same frozen request. It stores no shipment addresses,
+contacts, package contents, credentials or account numbers.
 
 ## Local configuration
 
@@ -163,8 +169,8 @@ application page.
 9. Perform a separate production-readiness review before requesting or enabling production.
 
 No go-live date should be set until return routing, customs valuation, dangerous
-goods wording, account permissions, duplicate prevention and the durable approval
-ledger have been verified.
+goods wording, account permissions, and the durable approval ledger have been
+verified in UAT.
 
 ## Information still required
 

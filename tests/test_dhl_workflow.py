@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import base64
+import sqlite3
+import tempfile
 import unittest
+from contextlib import closing
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -16,7 +19,11 @@ from workflows.dhl.config import (
     DHLEnvironment,
     TEST_BASE_URL,
 )
-from workflows.dhl.controls import ApprovalGuard, ApprovalRejected
+from workflows.dhl.controls import (
+    ApprovalGuard,
+    ApprovalRejected,
+    SQLiteApprovalLedger,
+)
 from workflows.dhl.documents import (
     MAX_OUTLOOK_ATTACHMENT_BYTES,
     ShipmentDocument,
@@ -561,6 +568,82 @@ class ApprovalControlTests(unittest.TestCase):
                 environment=self.prepared.environment,
                 payload=changed,
             )
+
+    def test_durable_ledger_rejects_reuse_after_process_restart(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = f"{directory}/approvals.sqlite3"
+            first_guard = ApprovalGuard(
+                expected_approver="dan.walker",
+                clock=lambda: NOW + timedelta(minutes=1),
+                ledger=SQLiteApprovalLedger(ledger_path),
+            )
+            approval = approval_for(self.prepared)
+            first_guard.authorise(
+                approval=approval,
+                operation=self.prepared.operation,
+                environment=self.prepared.environment,
+                payload=self.prepared.envelope,
+            )
+
+            restarted_guard = ApprovalGuard(
+                expected_approver="dan.walker",
+                clock=lambda: NOW + timedelta(minutes=2),
+                ledger=SQLiteApprovalLedger(ledger_path),
+            )
+            with self.assertRaisesRegex(ApprovalRejected, "already been consumed"):
+                restarted_guard.authorise(
+                    approval=approval,
+                    operation=self.prepared.operation,
+                    environment=self.prepared.environment,
+                    payload=self.prepared.envelope,
+                )
+
+    def test_durable_ledger_rejects_same_payload_under_new_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger = SQLiteApprovalLedger(f"{directory}/approvals.sqlite3")
+            guard = ApprovalGuard(
+                expected_approver="dan.walker",
+                clock=lambda: NOW + timedelta(minutes=1),
+                ledger=ledger,
+            )
+            guard.authorise(
+                approval=approval_for(self.prepared),
+                operation=self.prepared.operation,
+                environment=self.prepared.environment,
+                payload=self.prepared.envelope,
+            )
+            with self.assertRaisesRegex(ApprovalRejected, "already been submitted"):
+                guard.authorise(
+                    approval=approval_for(self.prepared, approval_id="approval-2"),
+                    operation=self.prepared.operation,
+                    environment=self.prepared.environment,
+                    payload=self.prepared.envelope,
+                )
+
+    def test_durable_ledger_contains_hashes_but_no_shipment_details(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = f"{directory}/approvals.sqlite3"
+            guard = ApprovalGuard(
+                expected_approver="dan.walker",
+                clock=lambda: NOW + timedelta(minutes=1),
+                ledger=SQLiteApprovalLedger(ledger_path),
+            )
+            guard.authorise(
+                approval=approval_for(self.prepared),
+                operation=self.prepared.operation,
+                environment=self.prepared.environment,
+                payload=self.prepared.envelope,
+            )
+            with closing(sqlite3.connect(ledger_path)) as connection:
+                row = connection.execute(
+                    "SELECT approval_id, payload_sha256, approved_by "
+                    "FROM consumed_approvals"
+                ).fetchone()
+            self.assertEqual(
+                row,
+                ("approval-1", self.prepared.payload_sha256, "dan.walker"),
+            )
+            self.assertNotIn("sender@example.com", str(row))
 
     def test_shipment_and_pickup_must_be_prepared_separately(self) -> None:
         with self.assertRaisesRegex(ValueError, "separate pickup operation"):
