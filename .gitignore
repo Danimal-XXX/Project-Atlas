@@ -81,5 +81,8 @@ knowledge_base/output/
 # Destination-specific operational state (remote IDs and attachment URLs)
 inventory/zoho/
 
+# DHL operational state, approvals, labels, and customs documents
+inventory/dhl/
+
 # WordPress software downloads
 output/wordpress/software_downloads/

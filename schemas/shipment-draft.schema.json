@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-atlas.local/schemas/shipment-draft.schema.json",
+  "title": "Atlas Controlled Shipment Draft",
+  "description": "Canonical, carrier-neutral shipment input that must be validated and frozen before approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "shipment_type",
+    "billing_account_ref",
+    "sender",
+    "recipient",
+    "packages",
+    "customs",
+    "pickup_requested"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "minLength": 1},
+    "shipment_type": {
+      "type": "string",
+      "enum": ["rma_return", "warranty_return", "paid_repair", "replacement", "evaluation", "outbound"]
+    },
+    "rma_number": {"type": ["string", "null"]},
+    "reason": {"type": "string", "minLength": 1},
+    "billing_account_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Logical Atlas account reference, never a credential or DHL account number."
+    },
+    "sender": {"$ref": "#/$defs/party"},
+    "recipient": {"$ref": "#/$defs/party"},
+    "packages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/package"}
+    },
+    "customs": {"$ref": "#/$defs/customs"},
+    "pickup_requested": {"type": "boolean"},
+    "customer_references": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true,
+      "default": []
+    },
+    "extensions": {"type": "object", "additionalProperties": true, "default": {}}
+  },
+  "$defs": {
+    "party": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_name", "contact_name", "phone", "email", "address"],
+      "properties": {
+        "company_name": {"type": "string", "minLength": 1},
+        "contact_name": {"type": "string", "minLength": 1},
+        "phone": {"type": "string", "minLength": 5},
+        "email": {"type": "string", "format": "email"},
+        "tax_id": {"type": ["string", "null"]},
+        "address": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["address_line_1", "city", "postal_code", "country_code"],
+          "properties": {
+            "address_line_1": {"type": "string", "minLength": 1},
+            "address_line_2": {"type": ["string", "null"]},
+            "suburb": {"type": ["string", "null"]},
+            "city": {"type": "string", "minLength": 1},
+            "state_or_province": {"type": ["string", "null"]},
+            "postal_code": {"type": "string", "minLength": 1},
+            "country_code": {"type": "string", "pattern": "^[A-Z]{2}$"}
+          }
+        }
+      }
+    },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "weight_kg", "length_cm", "width_cm", "height_cm"],
+      "properties": {
+        "description": {"type": "string", "minLength": 1},
+        "weight_kg": {"type": "number", "exclusiveMinimum": 0},
+        "length_cm": {"type": "number", "exclusiveMinimum": 0},
+        "width_cm": {"type": "number", "exclusiveMinimum": 0},
+        "height_cm": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "customs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declarable", "currency", "incoterm", "line_items"],
+      "properties": {
+        "declarable": {"type": "boolean"},
+        "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+        "incoterm": {"type": "string", "minLength": 3},
+        "invoice_type": {"type": "string", "enum": ["commercial", "proforma", "return"]},
+        "export_reason_type": {
+          "type": "string",
+          "enum": [
+            "permanent",
+            "temporary",
+            "return",
+            "used_exhibition_goods_to_origin",
+            "intercompany_use",
+            "commercial_purpose_or_sale",
+            "personal_belongings_or_personal_use",
+            "sample",
+            "gift",
+            "return_to_origin",
+            "warranty_replacement",
+            "diplomatic_goods",
+            "defence_material"
+          ]
+        },
+        "original_export_reference": {"type": ["string", "null"]},
+        "original_import_reference": {"type": ["string", "null"]},
+        "line_items": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/line_item"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"declarable": {"const": true}}},
+          "then": {
+            "required": ["invoice_type", "export_reason_type"],
+            "properties": {"line_items": {"minItems": 1}}
+          }
+        }
+      ]
+    },
+    "line_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_ref", "description", "quantity", "unit_value", "hs_code", "country_of_origin", "net_weight_kg"],
+      "properties": {
+        "product_ref": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "quantity": {"type": "integer", "minimum": 1},
+        "unit_value": {"type": "number", "minimum": 0},
+        "hs_code": {"type": "string", "pattern": "^[0-9]{6,12}$"},
+        "country_of_origin": {"type": "string", "pattern": "^[A-Z]{2}$"},
+        "net_weight_kg": {"type": "number", "exclusiveMinimum": 0}
+      }
+    }
+  }
+}

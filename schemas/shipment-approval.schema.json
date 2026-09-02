@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-atlas.local/schemas/shipment-approval.schema.json",
+  "title": "Atlas Shipment Operation Approval",
+  "description": "One-use approval tied to the exact payload and environment for a chargeable DHL operation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "operation",
+    "environment",
+    "payload_sha256",
+    "approved_by",
+    "approved_at",
+    "expires_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "minLength": 1},
+    "operation": {"type": "string", "enum": ["create_shipment", "create_pickup"]},
+    "environment": {"type": "string", "enum": ["test", "production"]},
+    "payload_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approved_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"}
+  }
+}

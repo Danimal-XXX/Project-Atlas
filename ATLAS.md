@@ -23,6 +23,7 @@ Keep responsibilities separated:
 - `atlas/`: shared orchestration, discovery, downloading, inventory, validation, packaging, and publishing infrastructure. Core code must not contain source- or destination-specific business logic.
 - `sources/`: thin ingestion connectors such as Confluence, HelpScout, and WordPress. A source reads external data and produces Atlas-compatible records.
 - `publishers/`: destination adapters such as Zoho, Markdown, or Cloudflare R2. A publisher consumes canonical Atlas objects and must not modify them.
+- `workflows/`: controlled operational integrations that can change external state. Workflows use canonical, schema-valid drafts and explicit approval boundaries; they are neither knowledge sources nor publishers.
 - `schemas/`: versioned contracts for canonical knowledge, inventories, manifests, assets, and related data.
 - `inventory/`: discovery manifests describing what exists at each source and its processing state.
 - `staging/`: reproducible working data and faithful source mirrors. Staging content is not canonical.
@@ -30,6 +31,23 @@ Keep responsibilities separated:
 - `output/`: generated packages, reports, and publisher artifacts. Output must be safe to recreate.
 
 Dependencies flow toward shared Atlas contracts. Connectors and publishers may depend on `atlas/` and `schemas/`; the core engine must not depend on individual connectors or publishers.
+
+## Controlled Operational Workflows
+
+Operational integrations such as shipment creation live under `workflows/`.
+They must:
+
+- validate a carrier- or service-neutral canonical draft before transformation;
+- freeze and hash the exact external request payload before approval;
+- bind approval to one operation, one environment, one payload, one approver, and one expiry;
+- consume approvals once before network contact and prevent automatic retries when a write outcome is uncertain;
+- separate independently chargeable actions, such as shipment creation and pickup booking;
+- default to a test environment and require an explicit configuration gate for production;
+- keep credentials, account numbers, personal data, labels, invoices, and generated documents out of version control;
+- maintain an auditable state ledger before production use.
+
+Read-only serviceability and rating calls may precede approval, but time-sensitive
+or contract-restricted rate responses must not become an Atlas analytics store.
 
 ## Canonical Pipeline
 

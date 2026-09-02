@@ -183,6 +183,18 @@ verifies each result, and records Atlas-to-Zoho IDs and checksums in
 articles. `--apply` is always required for Zoho writes; the default status is
 `Draft`.
 
+## Controlled DHL workflow
+
+Atlas includes a test-only foundation for StretchSense's DHL Express MyDHL API
+direct integration. It validates a carrier-neutral shipment draft, freezes and
+hashes the exact carrier request, and requires an expiring one-use approval for
+each shipment or pickup write. Production is disabled by default and write
+requests are not automatically retried when their outcome may be unknown.
+
+See `docs/DHL_WORKFLOW.md` for configuration, safety boundaries, the MyDHL v3.3
+request mapper, safe test preflight and remaining master-data requirements. No
+DHL credentials or account numbers are stored in the repository.
+
 ---
 
 # Roadmap
