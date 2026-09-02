@@ -34,8 +34,11 @@ from workflows.dhl.documents import (
 from workflows.dhl.mapper import MyDHLMapper, MyDHLMappingError
 from workflows.dhl.outlook_intake import (
     OutlookRMAIntakeError,
+    OutlookShipmentIntakeError,
     build_outlook_rma_review,
+    build_outlook_shipment_review,
     confirm_outlook_rma_review,
+    confirm_outlook_shipment_review,
 )
 from workflows.dhl.workflow import ShipmentWorkflow
 
@@ -144,6 +147,51 @@ def valid_outlook_rma_message(*, categories: list[str] | None = None) -> dict[st
             "content": "Private customer message containing the return request.",
         },
     }
+
+
+def valid_outlook_shipment_message(
+    *, categories: list[str] | None = None
+) -> dict[str, Any]:
+    message = valid_outlook_rma_message(
+        categories=(
+            categories if categories is not None else ["Create DHL Shipment"]
+        )
+    )
+    message["id"] = "outlook-message-production-materials"
+    message["subject"] = "Ship production ICs to supplier"
+    message["body"]["content"] = (
+        "Private supplier request for an ordinary outbound shipment."
+    )
+    return message
+
+
+def valid_outbound_draft() -> dict[str, Any]:
+    draft = valid_draft()
+    draft["id"] = "shipment-production-materials"
+    draft["shipment_type"] = "outbound"
+    draft.pop("rma_number")
+    draft["reason"] = "Production materials supplied to contract manufacturer"
+    draft["packages"][0]["description"] = "Integrated circuits"
+    draft["customs"].update(
+        {
+            "invoice_type": "commercial",
+            "export_reason_type": "intercompany_use",
+            "export_reason": "Production materials",
+            "commercial_value_status": "commercial_value",
+        }
+    )
+    draft["customs"].pop("valuation_note")
+    draft["customs"]["line_items"][0].update(
+        {
+            "product_ref": "IC-PART-TO-CONFIRM",
+            "description": "Integrated circuits for FPCA production",
+            "quantity": 530,
+            "unit_value": 1.25,
+            "hs_code": "854239",
+            "net_weight_kg": 0.5,
+        }
+    )
+    return draft
 
 
 class FakeResponse:
@@ -441,6 +489,92 @@ class OutlookRMAIntakeTests(unittest.TestCase):
         with self.assertRaisesRegex(OutlookRMAIntakeError, "changed after review"):
             confirm_outlook_rma_review(review)
 
+
+class OutlookShipmentIntakeTests(unittest.TestCase):
+    def test_explicit_shipment_category_is_required(self) -> None:
+        with self.assertRaisesRegex(
+            OutlookShipmentIntakeError, "Create DHL Shipment"
+        ):
+            build_outlook_shipment_review(
+                message=valid_outlook_shipment_message(categories=[]),
+                proposed_draft=valid_outbound_draft(),
+            )
+
+    def test_ordinary_shipment_does_not_inherit_rma_defaults(self) -> None:
+        candidate = valid_outbound_draft()
+        del candidate["billing_charges"]
+        del candidate["pickup_requested"]
+        del candidate["customs"]["line_items"][0]["unit_value"]
+
+        review = build_outlook_shipment_review(
+            message=valid_outlook_shipment_message(),
+            proposed_draft=candidate,
+        )
+
+        self.assertEqual(review["status"], "needs_review")
+        self.assertIn("billing_charges", review["missing_fields"])
+        self.assertIn("pickup_requested", review["missing_fields"])
+        self.assertIn(
+            "customs.line_items[0].unit_value", review["missing_fields"]
+        )
+        self.assertNotEqual(
+            review["proposed_draft"]["customs"]["line_items"][0].get(
+                "unit_value"
+            ),
+            50,
+        )
+        self.assertNotIn("faulty Motion capture glove", str(review))
+        self.assertNotIn("Private supplier request", str(review))
+        self.assertIs(review["dhl_request_made"], False)
+
+    def test_complete_ordinary_shipment_can_be_confirmed(self) -> None:
+        review = build_outlook_shipment_review(
+            message=valid_outlook_shipment_message(),
+            proposed_draft=valid_outbound_draft(),
+        )
+
+        self.assertEqual(review["status"], "ready_for_validation")
+        self.assertEqual(
+            review["source"]["trigger_category"], "Create DHL Shipment"
+        )
+        confirmed = confirm_outlook_shipment_review(review)
+        self.assertEqual(confirmed["shipment_type"], "outbound")
+        self.assertEqual(
+            confirmed["customs"]["line_items"][0]["quantity"], 530
+        )
+
+    def test_non_declarable_domestic_movement_can_have_no_line_items(self) -> None:
+        candidate = valid_outbound_draft()
+        candidate["sender"]["address"]["country_code"] = "CN"
+        candidate["customs"] = {
+            "declarable": False,
+            "currency": "CNY",
+            "incoterm": "DAP",
+            "line_items": [],
+        }
+        candidate["billing_charges"] = ["freight"]
+
+        review = build_outlook_shipment_review(
+            message=valid_outlook_shipment_message(),
+            proposed_draft=candidate,
+        )
+
+        self.assertEqual(review["status"], "ready_for_validation")
+        self.assertEqual(review["proposed_draft"]["customs"]["line_items"], [])
+
+    def test_ordinary_shipment_hash_detects_changes(self) -> None:
+        review = dict(
+            build_outlook_shipment_review(
+                message=valid_outlook_shipment_message(),
+                proposed_draft=valid_outbound_draft(),
+            )
+        )
+        review["proposed_draft"] = deepcopy(review["proposed_draft"])
+        review["proposed_draft"]["customs"]["line_items"][0]["quantity"] = 531
+        with self.assertRaisesRegex(
+            OutlookShipmentIntakeError, "changed after review"
+        ):
+            confirm_outlook_shipment_review(review)
 
 class ShipmentDocumentTests(unittest.TestCase):
     def test_documents_are_decoded_for_draft_only_handoff(self) -> None:

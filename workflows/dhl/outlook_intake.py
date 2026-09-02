@@ -1,4 +1,4 @@
-"""Controlled intake from one explicitly selected Outlook email to an RMA draft."""
+"""Controlled intake from one explicitly selected Outlook email to a shipment draft."""
 
 from __future__ import annotations
 
@@ -12,7 +12,9 @@ from workflows.dhl.workflow import ShipmentWorkflow
 
 
 OUTLOOK_RMA_TRIGGER_CATEGORY = "Create DHL RMA"
+OUTLOOK_SHIPMENT_TRIGGER_CATEGORY = "Create DHL Shipment"
 REVIEW_SCHEMA = "rma-email-review.schema.json"
+SHIPMENT_REVIEW_SCHEMA = "shipment-email-review.schema.json"
 REQUIRED_DRAFT_PATHS = (
     "billing_account_ref",
     "reason",
@@ -35,12 +37,15 @@ REQUIRED_DRAFT_PATHS = (
     "packages",
     "customs.declarable",
     "customs.incoterm",
-    "customs.line_items",
 )
 
 
 class OutlookRMAIntakeError(ValueError):
     """Raised when an Outlook RMA intake violates the controlled boundary."""
+
+
+class OutlookShipmentIntakeError(ValueError):
+    """Raised when an ordinary Outlook shipment intake is incomplete or unsafe."""
 
 
 def build_outlook_rma_review(
@@ -123,23 +128,127 @@ def confirm_outlook_rma_review(
     return ShipmentWorkflow(schema_validator).validate_draft(candidate)
 
 
-def _normalise_outlook_source(message: Mapping[str, Any]) -> dict[str, Any]:
+def build_outlook_shipment_review(
+    *,
+    message: Mapping[str, Any],
+    proposed_draft: Mapping[str, Any],
+    validator: AtlasSchemaValidator | None = None,
+) -> Mapping[str, Any]:
+    """Build a review-only candidate for a non-RMA DHL shipment request.
+
+    Ordinary shipments deliberately receive no RMA customs, valuation, billing,
+    packaging or collection assumptions. The operator or extraction service must
+    provide those values explicitly before the candidate can be confirmed.
+    """
+    schema_validator = validator or AtlasSchemaValidator()
+    source = _normalise_outlook_source(
+        message,
+        trigger_category=OUTLOOK_SHIPMENT_TRIGGER_CATEGORY,
+        error_type=OutlookShipmentIntakeError,
+    )
+    if not isinstance(proposed_draft, Mapping):
+        raise OutlookShipmentIntakeError("proposed_draft must be an object")
+
+    supplied = deepcopy(dict(proposed_draft))
+    candidate = deepcopy(supplied)
+    candidate.setdefault("schema_version", "1.0")
+    candidate.setdefault("id", f"outlook-shipment-{source['source_sha256'][:12]}")
+
+    extensions = candidate.setdefault("extensions", {})
+    if not isinstance(extensions, dict):
+        raise OutlookShipmentIntakeError(
+            "proposed_draft.extensions must be an object"
+        )
+    extensions["outlook_shipment_source"] = {
+        "message_id": source["message_id"],
+        "source_sha256": source["source_sha256"],
+    }
+
+    candidate = dict(ShipmentWorkflow(schema_validator).apply_defaults(candidate))
+    missing_fields = _missing_draft_fields(candidate)
+    for path in (
+        "shipment_type",
+        "billing_charges",
+        "collection_arrangement",
+        "pickup_requested",
+    ):
+        if not _value_at_path(supplied, path):
+            missing_fields.add(path)
+    missing = sorted(missing_fields)
+    validation_errors: list[str] = []
+    if not missing:
+        try:
+            ShipmentWorkflow(schema_validator).validate_draft(candidate)
+        except AtlasValidationError as error:
+            validation_errors.append(str(error))
+
+    review = {
+        "schema_version": "1.0",
+        "id": f"shipment-review-{source['source_sha256'][:16]}",
+        "operation": "prepare_shipment_draft",
+        "status": (
+            "ready_for_validation"
+            if not missing and not validation_errors
+            else "needs_review"
+        ),
+        "source": source,
+        "proposed_draft": candidate,
+        "draft_sha256": payload_sha256(candidate),
+        "missing_fields": missing,
+        "validation_errors": validation_errors,
+        "dhl_request_made": False,
+        "shipment_created": False,
+        "pickup_created": False,
+    }
+    return schema_validator.validate_object(review, SHIPMENT_REVIEW_SCHEMA)
+
+
+def confirm_outlook_shipment_review(
+    review: Mapping[str, Any],
+    *,
+    validator: AtlasSchemaValidator | None = None,
+) -> Mapping[str, Any]:
+    """Return an unchanged ordinary shipment draft after complete review."""
+    schema_validator = validator or AtlasSchemaValidator()
+    validated_review = schema_validator.validate_object(
+        review, SHIPMENT_REVIEW_SCHEMA
+    )
+    if validated_review["status"] != "ready_for_validation":
+        raise OutlookShipmentIntakeError("shipment email intake still needs review")
+    if validated_review["missing_fields"] or validated_review["validation_errors"]:
+        raise OutlookShipmentIntakeError(
+            "shipment email intake contains unresolved fields"
+        )
+    candidate = validated_review["proposed_draft"]
+    if payload_sha256(candidate) != validated_review["draft_sha256"]:
+        raise OutlookShipmentIntakeError(
+            "shipment email intake draft changed after review"
+        )
+    return ShipmentWorkflow(schema_validator).validate_draft(candidate)
+
+
+def _normalise_outlook_source(
+    message: Mapping[str, Any],
+    *,
+    trigger_category: str = OUTLOOK_RMA_TRIGGER_CATEGORY,
+    error_type: type[ValueError] = OutlookRMAIntakeError,
+) -> dict[str, Any]:
     if not isinstance(message, Mapping):
-        raise OutlookRMAIntakeError("Outlook message must be an object")
+        raise error_type("Outlook message must be an object")
     categories = message.get("categories")
-    if not _contains_trigger_category(categories):
-        raise OutlookRMAIntakeError(
-            f"Outlook message must be explicitly categorised {OUTLOOK_RMA_TRIGGER_CATEGORY!r}"
+    if not _contains_trigger_category(categories, trigger_category):
+        raise error_type(
+            f"Outlook message must be explicitly categorised {trigger_category!r}"
         )
 
     sender = message.get("from")
     email_address = sender.get("emailAddress") if isinstance(sender, Mapping) else None
     if not isinstance(email_address, Mapping):
-        raise OutlookRMAIntakeError("Outlook message sender is required")
+        raise error_type("Outlook message sender is required")
     body = message.get("body")
     body_content = body.get("content") if isinstance(body, Mapping) else ""
     if not isinstance(body_content, str):
-        raise OutlookRMAIntakeError("Outlook message body must contain text")
+        raise error_type("Outlook message body must contain text")
 
     required_values = {
         "message_id": message.get("id"),
@@ -149,7 +258,7 @@ def _normalise_outlook_source(message: Mapping[str, Any]) -> dict[str, Any]:
     }
     missing = [name for name, value in required_values.items() if not _nonempty(value)]
     if missing:
-        raise OutlookRMAIntakeError(
+        raise error_type(
             "Outlook message is missing required metadata: " + ", ".join(missing)
         )
 
@@ -162,7 +271,7 @@ def _normalise_outlook_source(message: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "provider": "outlook",
         "selection": "explicit",
-        "trigger_category": OUTLOOK_RMA_TRIGGER_CATEGORY,
+        "trigger_category": trigger_category,
         "message_id": str(required_values["message_id"]).strip(),
         "conversation_id": _optional_text(message.get("conversationId")),
         "internet_message_id": _optional_text(message.get("internetMessageId")),
@@ -174,11 +283,11 @@ def _normalise_outlook_source(message: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def _contains_trigger_category(categories: Any) -> bool:
+def _contains_trigger_category(categories: Any, trigger_category: str) -> bool:
     return (
         isinstance(categories, Sequence)
         and not isinstance(categories, (str, bytes))
-        and OUTLOOK_RMA_TRIGGER_CATEGORY in categories
+        and trigger_category in categories
     )
 
 
@@ -192,7 +301,11 @@ def _missing_draft_fields(candidate: Mapping[str, Any]) -> set[str]:
             for field in ("description", "weight_kg", "length_cm", "width_cm", "height_cm"):
                 if not isinstance(package, Mapping) or not _present(package.get(field)):
                     missing.add(f"packages[{index}].{field}")
-    line_items = candidate.get("customs", {}).get("line_items") if isinstance(candidate.get("customs"), Mapping) else None
+    customs = candidate.get("customs")
+    line_items = customs.get("line_items") if isinstance(customs, Mapping) else None
+    if isinstance(customs, Mapping) and customs.get("declarable") is True:
+        if not _present(line_items):
+            missing.add("customs.line_items")
     if isinstance(line_items, Sequence) and not isinstance(line_items, (str, bytes)):
         for index, item in enumerate(line_items):
             for field in (

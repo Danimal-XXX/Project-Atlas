@@ -65,13 +65,14 @@ invoice separately prints the export type as `RETURN`.
 schemas/shipment-draft.schema.json       Carrier-neutral shipment input
 schemas/shipment-approval.schema.json    Exact one-use operation approval
 schemas/rma-email-review.schema.json     Review-only Outlook intake contract
+schemas/shipment-email-review.schema.json Review-only ordinary shipment intake
 workflows/dhl/config.py                  Test/production configuration gate
 workflows/dhl/workflow.py                Validation and frozen request snapshot
 workflows/dhl/controls.py                Canonical hash and durable approval ledger
 workflows/dhl/mapper.py                  Atlas-to-MyDHL v3.3 request mapping
 workflows/dhl/client.py                  MyDHL HTTP boundary
 workflows/dhl/documents.py               Document decoding and draft-only manifest
-workflows/dhl/outlook_intake.py          Explicit email-to-RMA review boundary
+workflows/dhl/outlook_intake.py          Explicit email-to-shipment review boundary
 tests/test_dhl_workflow.py               Offline safety and contract tests
 ```
 
@@ -112,6 +113,38 @@ Apply "Create DHL RMA" category
   -> create shipment without pickup
   -> create unsent Outlook reply draft with documents
 ```
+
+## Outlook-to-shipment intake
+
+Ordinary supplier, production-material and one-off delivery requests use the
+exact Outlook category **Create DHL Shipment**. They are kept separate from
+RMA intake so return-specific assumptions cannot leak into commercial or
+production shipments.
+
+`build_outlook_shipment_review()` requires the operator or extraction service
+to state the shipment type, billing charges, collection arrangement and pickup
+choice explicitly. It does not apply the RMA defaults for DDP, USD 50 customs
+value, pro forma invoices, faulty-glove wording or 20 x 15 x 10 cm packaging.
+Missing origin, destination, contents, quantity, package, customs, billing or
+collection data leaves the review in `needs_review`.
+
+The intended operator sequence is:
+
+```text
+Apply "Create DHL Shipment" category
+  -> fetch that one Outlook message
+  -> classify the movement and extract only evidenced fields
+  -> review and complete every missing commercial and package field
+  -> confirm the unchanged canonical shipment draft
+  -> DHL validation/rates/preflight
+  -> Dan approves the exact shipment payload hash
+  -> create shipment without pickup
+  -> if required, separately prepare and approve a pickup operation
+  -> create an unsent Outlook hand-off draft
+```
+
+The email category is an intake trigger only. It cannot create a shipment,
+pickup, label, charge or sent email.
 
 The client exposes address validation and rates as non-chargeable preparation
 operations. Shipment and pickup writes require separate `PreparedOperation`
