@@ -7,8 +7,9 @@ import unittest
 from contextlib import closing
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
-from typing import Any
 from pathlib import Path
+from typing import Any
+from unittest.mock import MagicMock, patch
 
 import requests
 
@@ -690,6 +691,33 @@ class ApprovalControlTests(unittest.TestCase):
             expected_approver="dan.walker",
             clock=lambda: NOW + timedelta(minutes=1),
         )
+
+    def test_sqlite_ledger_closes_connections(self) -> None:
+        ledger = object.__new__(SQLiteApprovalLedger)
+        ledger.path = Path("unused.sqlite3")
+        connection = MagicMock()
+
+        with patch(
+            "workflows.dhl.ledger.sqlite3.connect", return_value=connection
+        ):
+            with ledger._connect() as opened:
+                self.assertIs(opened, connection)
+
+        connection.close.assert_called_once_with()
+
+    def test_sqlite_ledger_closes_connections_after_error(self) -> None:
+        ledger = object.__new__(SQLiteApprovalLedger)
+        ledger.path = Path("unused.sqlite3")
+        connection = MagicMock()
+
+        with patch(
+            "workflows.dhl.ledger.sqlite3.connect", return_value=connection
+        ):
+            with self.assertRaisesRegex(RuntimeError, "operation failed"):
+                with ledger._connect():
+                    raise RuntimeError("operation failed")
+
+        connection.close.assert_called_once_with()
 
     def test_exact_approval_is_consumed_once(self) -> None:
         approval = approval_for(self.prepared)
