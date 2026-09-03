@@ -62,6 +62,21 @@ approved full wording to `Faulty - repair/assessment` in that field and retains
 `Faulty - return for repair/assessment` in the line-item customs detail. The
 invoice separately prints the export type as `RETURN`.
 
+For declarable shipments using a DHL-generated customs invoice, Atlas requests
+Paperless Trade with `valueAddedServices.serviceCode="WY"`. A reviewed
+destination exception may set `customs.paperless_trade=false`; the frozen
+payload and approval hash make that exception visible before submission.
+
+Each declarable line item carries separate tariff classifications: `hs_code`
+is the 6- or 8-digit outbound export commodity code, and `inbound_hs_code` is
+the destination's 8- or 10-digit import tariff code. Atlas does not derive one
+from the other. For the reviewed glove return to China these are `950450` and
+`9504500000`, respectively.
+
+Atlas also rejects declarable drafts unless the total packed gross weight is
+greater than the total line-item commodity net weight, matching DHL NZ's
+readiness requirement for invoice weights.
+
 ## Current implementation
 
 ```text
@@ -217,11 +232,13 @@ application page.
    shipment-data compliance without creating a shipment, waybill or label.
 7. After Dan explicitly approves the exact test payload, validate label and
    customs-document decoding in DHL's test environment.
-8. Complete UAT using approved return locations and product/customs master data.
-9. Verify production credentials and account permissions privately.
-10. Enable one reviewed draft ID and run `validateDataOnly=true` in production.
-11. Freeze the returned production payload and obtain a new explicit approval.
-12. Create one pilot shipment without pickup, reconcile the ledger, inspect the
+8. Complete UAT using approved return locations and product/customs master data,
+   including Paperless Trade (`WY`) and separate inbound/outbound commodity codes.
+9. Submit DHL NZ's MyDHL API Integration Readiness Checklist for review.
+10. Verify production credentials and account permissions privately.
+11. Enable one reviewed draft ID and run `validateDataOnly=true` in production.
+12. Freeze the returned production payload and obtain a new explicit approval.
+13. Create one pilot shipment without pickup, reconcile the ledger, inspect the
     non-sample documents, then return the kill switch to `false`.
 
 No broad autonomous go-live should be set until return routing, customs

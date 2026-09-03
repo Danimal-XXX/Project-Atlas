@@ -306,6 +306,8 @@ def _missing_draft_fields(candidate: Mapping[str, Any]) -> set[str]:
     if isinstance(customs, Mapping) and customs.get("declarable") is True:
         if not _present(line_items):
             missing.add("customs.line_items")
+        if not _present(customs.get("paperless_trade")):
+            missing.add("customs.paperless_trade")
     if isinstance(line_items, Sequence) and not isinstance(line_items, (str, bytes)):
         for index, item in enumerate(line_items):
             for field in (
@@ -314,6 +316,7 @@ def _missing_draft_fields(candidate: Mapping[str, Any]) -> set[str]:
                 "quantity",
                 "unit_value",
                 "hs_code",
+                "inbound_hs_code",
                 "country_of_origin",
                 "net_weight_kg",
             ):

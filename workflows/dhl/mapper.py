@@ -121,6 +121,8 @@ class MyDHLMapper:
                     ),
                 }
             )
+            if customs["paperless_trade"]:
+                request["valueAddedServices"] = [{"serviceCode": "WY"}]
         return request
 
     @staticmethod
@@ -279,7 +281,11 @@ class MyDHLMapper:
                         "unitOfMeasurement": "PCS",
                     },
                     "commodityCodes": [
-                        {"typeCode": "outbound", "value": item["hs_code"]}
+                        {"typeCode": "outbound", "value": item["hs_code"]},
+                        {
+                            "typeCode": "inbound",
+                            "value": item["inbound_hs_code"],
+                        },
                     ],
                     "exportReasonType": export_reason,
                     "manufacturerCountry": item["country_of_origin"],

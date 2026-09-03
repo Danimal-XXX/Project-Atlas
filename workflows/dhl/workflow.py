@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from atlas.schema_validator import AtlasSchemaValidator
+from atlas.schema_validator import AtlasSchemaValidator, AtlasValidationError
 from workflows.dhl.config import DHLEnvironment
 from workflows.dhl.controls import payload_sha256
 
@@ -46,7 +46,30 @@ class ShipmentWorkflow:
 
     def validate_draft(self, draft: Mapping[str, Any]) -> Mapping[str, Any]:
         normalised = self.apply_defaults(draft)
-        return self.validator.validate_object(normalised, "shipment-draft.schema.json")
+        validated = self.validator.validate_object(
+            normalised, "shipment-draft.schema.json"
+        )
+        self._validate_customs_weight(validated)
+        return validated
+
+    @staticmethod
+    def _validate_customs_weight(draft: Mapping[str, Any]) -> None:
+        customs = draft["customs"]
+        if not customs["declarable"]:
+            return
+        total_gross = sum(package["weight_kg"] for package in draft["packages"])
+        total_net = sum(item["net_weight_kg"] for item in customs["line_items"])
+        if total_gross <= total_net:
+            raise AtlasValidationError(
+                object_id=str(draft.get("id", "<unknown>")),
+                json_path="$.packages",
+                schema_path="$defs.customs_weight",
+                message=(
+                    "total packed gross weight must be greater than total "
+                    "commodity net weight"
+                ),
+                schema_name="shipment-draft.schema.json",
+            )
 
     @staticmethod
     def apply_defaults(draft: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -65,6 +88,7 @@ class ShipmentWorkflow:
         customs = normalised.get("customs")
         if not isinstance(customs, dict):
             return normalised
+        customs.setdefault("paperless_trade", True)
         customs.setdefault("currency", "USD")
         customs.setdefault("incoterm", "DDP")
         customs.setdefault("invoice_type", "proforma")

@@ -93,6 +93,7 @@ def valid_draft(*, pickup_requested: bool = False) -> dict[str, Any]:
         ],
         "customs": {
             "declarable": True,
+            "paperless_trade": True,
             "currency": "USD",
             "incoterm": "DDP",
             "invoice_type": "proforma",
@@ -106,7 +107,8 @@ def valid_draft(*, pickup_requested: bool = False) -> dict[str, Any]:
                     "description": "Wearable motion capture gloves",
                     "quantity": 1,
                     "unit_value": 50,
-                    "hs_code": "9504500000",
+                    "hs_code": "950450",
+                    "inbound_hs_code": "9504500000",
                     "country_of_origin": "CN",
                     "net_weight_kg": 0.8,
                 }
@@ -190,6 +192,7 @@ def valid_outbound_draft() -> dict[str, Any]:
             "quantity": 530,
             "unit_value": 1.25,
             "hs_code": "854239",
+            "inbound_hs_code": "85423900",
             "net_weight_kg": 0.5,
         }
     )
@@ -247,6 +250,7 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
         draft = valid_draft()
         for field in (
             "currency",
+            "paperless_trade",
             "invoice_type",
             "export_reason_type",
             "export_reason",
@@ -257,6 +261,7 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
         del draft["customs"]["line_items"][0]["unit_value"]
         normalised = ShipmentWorkflow().validate_draft(draft)
         self.assertEqual(normalised["customs"]["invoice_type"], "proforma")
+        self.assertIs(normalised["customs"]["paperless_trade"], True)
         self.assertEqual(normalised["customs"]["export_reason"], "Faulty - return for repair/assessment")
         self.assertEqual(normalised["customs"]["commercial_value_status"], "no_commercial_value")
         self.assertEqual(normalised["customs"]["line_items"][0]["unit_value"], 50.0)
@@ -265,6 +270,12 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
         draft = valid_draft()
         draft["customs"]["line_items"][0]["hs_code"] = "9504.50"
         with self.assertRaisesRegex(AtlasValidationError, "hs_code"):
+            self.validator.validate_object(draft, "shipment-draft.schema.json")
+
+    def test_invalid_inbound_hs_code_is_rejected(self) -> None:
+        draft = valid_draft()
+        draft["customs"]["line_items"][0]["inbound_hs_code"] = "950450"
+        with self.assertRaisesRegex(AtlasValidationError, "inbound_hs_code"):
             self.validator.validate_object(draft, "shipment-draft.schema.json")
 
     def test_declarable_shipment_requires_line_items(self) -> None:
@@ -278,6 +289,14 @@ class ShipmentDraftSchemaTests(unittest.TestCase):
         del draft["customs"]["line_items"][0]["net_weight_kg"]
         with self.assertRaisesRegex(AtlasValidationError, "net_weight_kg"):
             self.validator.validate_object(draft, "shipment-draft.schema.json")
+
+    def test_packed_gross_weight_must_exceed_total_commodity_weight(self) -> None:
+        draft = valid_draft()
+        draft["packages"][0]["weight_kg"] = 0.8
+        with self.assertRaisesRegex(
+            AtlasValidationError, "gross weight must be greater"
+        ):
+            ShipmentWorkflow().validate_draft(draft)
 
     def test_collection_must_be_arranged_by_sender(self) -> None:
         draft = valid_draft()
@@ -364,6 +383,7 @@ class MyDHLMapperTests(unittest.TestCase):
         self.assertEqual(label_option["templateName"], "ECOM26_84_001")
         self.assertIs(label_option["fitLabelsToA4"], False)
         self.assertEqual(invoice_option["invoiceType"], "proforma")
+        self.assertEqual(request["valueAddedServices"], [{"serviceCode": "WY"}])
         self.assertNotIn("templateName", invoice_option)
         self.assertIs(output_options["allDocumentsInOneImage"], False)
         self.assertIs(output_options["splitInvoiceAndReceipt"], True)
@@ -377,6 +397,13 @@ class MyDHLMapperTests(unittest.TestCase):
             declaration["lineItems"][0]["description"],
         )
         self.assertEqual(declaration["lineItems"][0]["price"], 50)
+        self.assertEqual(
+            declaration["lineItems"][0]["commodityCodes"],
+            [
+                {"typeCode": "outbound", "value": "950450"},
+                {"typeCode": "inbound", "value": "9504500000"},
+            ],
+        )
         self.assertIn(
             "Faulty - return for repair/assessment",
             declaration["lineItems"][0]["additionalInformation"],
@@ -384,6 +411,19 @@ class MyDHLMapperTests(unittest.TestCase):
         self.assertEqual(
             declaration["invoice"]["customerReferences"][0]["typeCode"], "RMA"
         )
+
+    def test_reviewed_non_plt_exception_omits_wy(self) -> None:
+        draft = valid_draft()
+        draft["customs"]["paperless_trade"] = False
+        request = self.mapper.build_shipment_request(
+            draft,
+            planned_shipping_date_and_time="2026-09-03T09:00:00 GMT+12:00",
+            product_code="P",
+            account_number="test-account",
+            invoice_number="RMA-12895",
+            invoice_date="2026-09-02",
+        )
+        self.assertNotIn("valueAddedServices", request)
 
     def test_declarable_shipment_requires_invoice_identity(self) -> None:
         with self.assertRaisesRegex(MyDHLMappingError, "invoice number"):
