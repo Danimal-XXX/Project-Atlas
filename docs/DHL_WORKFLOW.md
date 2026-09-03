@@ -2,16 +2,18 @@
 
 ## Status
 
-The DHL Express MyDHL REST integration is in test-only development.
+The DHL Express MyDHL REST integration has completed sandbox UAT and contains
+supervised-production controls. Production remains disabled by default and must
+be enabled for one reviewed Atlas draft ID at a time.
 
 - Integration type: direct integration, internally developed for StretchSense.
 - Account owner: StretchSense / Sensor Holdings Limited.
 - MyDHL test access: approved 23 August 2026.
 - Developer application: approved and enabled for Customer (Integration) Testing.
 - Sandbox product: `exp-mydhlapi-sandbox-all-m`.
-- Production access: not requested.
+- Production access: must be separately verified in the DHL Developer Portal.
 - Credentials: available only through the DHL API Developer Portal.
-- Production shipment and pickup creation: disabled.
+- Production shipment and pickup creation: default-off; no live UAT completed.
 - DHL New Zealand integration support: `cisnz@dhl.com`.
 
 The DHL account number and API credentials belong in local environment variables
@@ -25,9 +27,10 @@ may use another billing arrangement and Incoterm. A one-glove RMA defaults to
 `faulty Motion capture glove`; model, hand and size remain separate traceability
 details when known.
 
-Production is structurally blocked in the current code even if the environment
-flag is changed. Removing that block requires a reviewed code change after the
-durable approval ledger and production-readiness controls are complete.
+Production requires all of the following independent gates: the production
+environment, the explicit production-enable switch, the configured approver,
+a persistent SQLite approval ledger, and one exact allowed Atlas draft ID.
+Changing only the environment flag is insufficient.
 
 ## Scope
 
@@ -68,7 +71,8 @@ schemas/rma-email-review.schema.json     Review-only Outlook intake contract
 schemas/shipment-email-review.schema.json Review-only ordinary shipment intake
 workflows/dhl/config.py                  Test/production configuration gate
 workflows/dhl/workflow.py                Validation and frozen request snapshot
-workflows/dhl/controls.py                Canonical hash and durable approval ledger
+workflows/dhl/controls.py                Canonical hash and approval consumption
+workflows/dhl/ledger.py                  Durable approvals, writes and outcomes
 workflows/dhl/mapper.py                  Atlas-to-MyDHL v3.3 request mapping
 workflows/dhl/client.py                  MyDHL HTTP boundary
 workflows/dhl/documents.py               Document decoding and draft-only manifest
@@ -152,6 +156,13 @@ objects and separate approvals. Write requests are never automatically retried:
 if a connection fails after submission, the outcome is treated as unknown and
 must be reconciled before another attempt.
 
+The SQLite ledger reserves the exact operation before network contact. It
+persists approval consumption and submission state across process restarts and
+blocks a duplicate payload whether the previous state is `submitting`,
+`succeeded` or `outcome_unknown`. A process crash leaves a visible `submitting`
+record; any exception after the write begins leaves `outcome_unknown`. Both
+require operator reconciliation against MyDHL before a new reviewed operation.
+
 DHL product `Q` (Medical Express) is prohibited by StretchSense policy. It may
 appear in a transient rate response, but the mapper will reject it for shipment
 creation. Standard international test shipments use product `P` (Express
@@ -181,7 +192,15 @@ DHL_ACCOUNT_NUMBER=<approved StretchSense account>
 DHL_ENVIRONMENT=test
 DHL_ENABLE_PRODUCTION=false
 DHL_APPROVER_ID=dan.walker
+DHL_APPROVAL_LEDGER_PATH=inventory/dhl/approval-ledger.sqlite3
+DHL_PRODUCTION_ALLOWED_DRAFT_ID=
 ```
+
+`DHL_ENABLE_PRODUCTION=false` is the immediate kill switch. For a controlled
+production preflight, set the environment to `production`, enable production,
+and set `DHL_PRODUCTION_ALLOWED_DRAFT_ID` to the exact reviewed draft ID. Atlas
+will reject every other draft before network contact. Keep the allowed ID blank
+whenever no production operation is actively being reviewed.
 
 Do not send the credentials in email, chat, screenshots, fixtures or issue
 comments. The approved test credentials are viewed under the developer portal's
@@ -199,11 +218,34 @@ application page.
 7. After Dan explicitly approves the exact test payload, validate label and
    customs-document decoding in DHL's test environment.
 8. Complete UAT using approved return locations and product/customs master data.
-9. Perform a separate production-readiness review before requesting or enabling production.
+9. Verify production credentials and account permissions privately.
+10. Enable one reviewed draft ID and run `validateDataOnly=true` in production.
+11. Freeze the returned production payload and obtain a new explicit approval.
+12. Create one pilot shipment without pickup, reconcile the ledger, inspect the
+    non-sample documents, then return the kill switch to `false`.
 
-No go-live date should be set until return routing, customs valuation, dangerous
-goods wording, account permissions, and the durable approval ledger have been
-verified in UAT.
+No broad autonomous go-live should be set until return routing, customs
+valuation, dangerous-goods wording, account permissions and operating limits
+have been verified beyond the first locked pilot.
+
+## Supervising autonomy
+
+Atlas separates autonomy from authority. It may monitor explicitly selected
+work, extract data, apply approved defaults, validate, compare rates and prepare
+drafts without chargeable authority. Production authority remains bounded by:
+
+- one allowed draft ID at a time;
+- an exact, expiring payload-hash approval;
+- one-use approval consumption in the durable ledger;
+- duplicate and unknown-outcome blocking across restarts;
+- separate shipment and pickup approvals;
+- no automatic email sending; and
+- the `DHL_ENABLE_PRODUCTION=false` kill switch.
+
+The ledger is the audit source for who approved an operation, which exact hash
+was submitted, when it started, its final state and any carrier reference. Do
+not delete or edit ledger rows to clear a block; reconcile the operation in
+MyDHL and prepare a new reviewed operation instead.
 
 ## Information still required
 

@@ -8,6 +8,7 @@ from contextlib import closing
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Any
+from pathlib import Path
 
 import requests
 
@@ -420,18 +421,32 @@ class DHLConfigurationTests(unittest.TestCase):
         with self.assertRaisesRegex(DHLConfigurationError, "production is disabled"):
             config.assert_environment_safe()
 
-    def test_production_remains_blocked_after_configuration(self) -> None:
-        config = DHLConfig(
-            username="user",
-            password="secret",
-            account_number="123",
-            environment=DHLEnvironment.PRODUCTION,
-            production_enabled=True,
-            approver_id="dan.walker",
-        )
-        with self.assertRaisesRegex(
-            DHLConfigurationError, "structurally disabled"
-        ):
+    def test_production_requires_durable_ledger_and_single_draft_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = {
+                "username": "user",
+                "password": "secret",
+                "account_number": "123",
+                "environment": DHLEnvironment.PRODUCTION,
+                "production_enabled": True,
+                "approver_id": "dan.walker",
+            }
+            with self.assertRaisesRegex(
+                DHLConfigurationError, "APPROVAL_LEDGER_PATH"
+            ):
+                DHLConfig(**base).assert_environment_safe()
+            with self.assertRaisesRegex(
+                DHLConfigurationError, "PRODUCTION_ALLOWED_DRAFT_ID"
+            ):
+                DHLConfig(
+                    **base,
+                    approval_ledger_path=Path(directory) / "ledger.sqlite3",
+                ).assert_environment_safe()
+            config = DHLConfig(
+                **base,
+                approval_ledger_path=Path(directory) / "ledger.sqlite3",
+                allowed_production_draft_id="rma-12895",
+            )
             config.assert_environment_safe()
 
 
@@ -718,7 +733,6 @@ class ApprovalControlTests(unittest.TestCase):
                 environment=self.prepared.environment,
                 payload=self.prepared.envelope,
             )
-
             restarted_guard = ApprovalGuard(
                 expected_approver="dan.walker",
                 clock=lambda: NOW + timedelta(minutes=2),
@@ -778,6 +792,61 @@ class ApprovalControlTests(unittest.TestCase):
                 ("approval-1", self.prepared.payload_sha256, "dan.walker"),
             )
             self.assertNotIn("sender@example.com", str(row))
+
+    def test_existing_ledger_is_migrated_without_losing_consumptions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = f"{directory}/approvals.sqlite3"
+            approval = approval_for(self.prepared)
+            with closing(sqlite3.connect(ledger_path)) as connection:
+                connection.execute(
+                    """
+                    CREATE TABLE consumed_approvals (
+                        approval_id TEXT PRIMARY KEY,
+                        operation TEXT NOT NULL,
+                        environment TEXT NOT NULL,
+                        payload_sha256 TEXT NOT NULL,
+                        approved_by TEXT NOT NULL,
+                        consumed_at TEXT NOT NULL,
+                        UNIQUE (operation, environment, payload_sha256)
+                    )
+                    """
+                )
+                connection.execute(
+                    """
+                    INSERT INTO consumed_approvals VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        approval["id"],
+                        approval["operation"],
+                        approval["environment"],
+                        approval["payload_sha256"],
+                        approval["approved_by"],
+                        approval["approved_at"],
+                    ),
+                )
+                connection.commit()
+            ledger = SQLiteApprovalLedger(ledger_path)
+            guard = ApprovalGuard(
+                expected_approver="dan.walker",
+                clock=lambda: NOW + timedelta(minutes=1),
+                ledger=ledger,
+            )
+            with self.assertRaisesRegex(ApprovalRejected, "already been consumed"):
+                guard.authorise(
+                    approval=approval,
+                    operation=self.prepared.operation,
+                    environment=self.prepared.environment,
+                    payload=self.prepared.envelope,
+                )
+            with closing(sqlite3.connect(ledger_path)) as connection:
+                tables = {
+                    row[0]
+                    for row in connection.execute(
+                        "SELECT name FROM sqlite_master WHERE type = 'table'"
+                    )
+                }
+            self.assertIn("dhl_submissions", tables)
+            self.assertIn("dhl_audit_events", tables)
 
     def test_shipment_and_pickup_must_be_prepared_separately(self) -> None:
         with self.assertRaisesRegex(ValueError, "separate pickup operation"):
@@ -900,6 +969,145 @@ class MyDHLClientTests(unittest.TestCase):
                 approval_for(prepared),
             )
         self.assertEqual(len(session.calls), 1)
+
+    def test_durable_submission_blocks_duplicate_after_restart(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "approval-ledger.sqlite3"
+            workflow = ShipmentWorkflow()
+            prepared = workflow.prepare(
+                draft=valid_draft(),
+                dhl_payload={"shipment": "payload", "pickup": {"isRequested": False}},
+                operation="create_shipment",
+            )
+            first_session = FakeSession(
+                [FakeResponse({"shipmentTrackingNumber": "TEST-1"})]
+            )
+            first_client = MyDHLClient(
+                DHLConfig(
+                    username="test-user",
+                    password="test-password",
+                    account_number="test-account",
+                ),
+                approval_guard=ApprovalGuard(
+                    expected_approver="dan.walker",
+                    clock=lambda: NOW + timedelta(minutes=1),
+                    ledger=SQLiteApprovalLedger(ledger_path),
+                ),
+                session=first_session,
+                sleeper=lambda _: None,
+            )
+            first_client.create_shipment(prepared, approval_for(prepared))
+
+            second_session = FakeSession()
+            second_client = MyDHLClient(
+                first_client.config,
+                approval_guard=ApprovalGuard(
+                    expected_approver="dan.walker",
+                    clock=lambda: NOW + timedelta(minutes=2),
+                    ledger=SQLiteApprovalLedger(ledger_path),
+                ),
+                session=second_session,
+                sleeper=lambda _: None,
+            )
+            second_approval = approval_for(prepared, approval_id="approval-2")
+            with self.assertRaisesRegex(ApprovalRejected, "already been submitted"):
+                second_client.create_shipment(prepared, second_approval)
+            self.assertEqual(second_session.calls, [])
+
+    def test_unknown_outcome_is_persisted_for_reconciliation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger = SQLiteApprovalLedger(Path(directory) / "ledger.sqlite3")
+            session = FakeSession([requests.ConnectionError("connection lost")])
+            prepared = ShipmentWorkflow().prepare(
+                draft=valid_draft(),
+                dhl_payload={"shipment": "payload", "pickup": {"isRequested": False}},
+                operation="create_shipment",
+            )
+            client = MyDHLClient(
+                DHLConfig(
+                    username="test-user",
+                    password="test-password",
+                    account_number="test-account",
+                ),
+                approval_guard=ApprovalGuard(
+                    expected_approver="dan.walker",
+                    clock=lambda: NOW + timedelta(minutes=1),
+                    ledger=ledger,
+                ),
+                session=session,
+                sleeper=lambda _: None,
+            )
+            with self.assertRaisesRegex(MyDHLAPIError, "outcome is unknown"):
+                client.create_shipment(prepared, approval_for(prepared))
+            record = ledger.get_submission(
+                operation="create_shipment",
+                environment="test",
+                payload_sha256=prepared.payload_sha256,
+            )
+            self.assertIsNotNone(record)
+            self.assertEqual(record["state"], "outcome_unknown")
+
+    def test_production_requires_matching_durable_guard_and_locked_draft(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "ledger.sqlite3"
+            config = DHLConfig(
+                username="production-user",
+                password="production-password",
+                account_number="production-account",
+                environment=DHLEnvironment.PRODUCTION,
+                production_enabled=True,
+                approver_id="dan.walker",
+                approval_ledger_path=ledger_path,
+                allowed_production_draft_id="rma-12895",
+            )
+            session = FakeSession(
+                [
+                    FakeResponse({"status": "200"}),
+                    FakeResponse({"shipmentTrackingNumber": "LIVE-1"}),
+                ]
+            )
+            ledger = SQLiteApprovalLedger(ledger_path)
+            client = MyDHLClient(
+                config,
+                approval_guard=ApprovalGuard(
+                    expected_approver="dan.walker",
+                    clock=lambda: NOW + timedelta(minutes=1),
+                    ledger=ledger,
+                ),
+                session=session,
+                sleeper=lambda _: None,
+            )
+            prepared = ShipmentWorkflow().prepare(
+                draft=valid_draft(),
+                dhl_payload={"shipment": "payload", "pickup": {"isRequested": False}},
+                operation="create_shipment",
+                environment=DHLEnvironment.PRODUCTION,
+            )
+            client.validate_shipment(prepared)
+            self.assertEqual(
+                session.calls[0]["url"],
+                "https://express.api.dhl.com/mydhlapi/shipments",
+            )
+            result = client.create_shipment(prepared, approval_for(prepared))
+            self.assertEqual(result["shipmentTrackingNumber"], "LIVE-1")
+            self.assertEqual(len(session.calls), 2)
+            production_record = ledger.get_submission(
+                operation="create_shipment",
+                environment="production",
+                payload_sha256=prepared.payload_sha256,
+            )
+            self.assertEqual(production_record["state"], "succeeded")
+            self.assertEqual(production_record["carrier_reference"], "LIVE-1")
+            changed_draft = valid_draft()
+            changed_draft["id"] = "another-rma"
+            blocked = ShipmentWorkflow().prepare(
+                draft=changed_draft,
+                dhl_payload={"shipment": "payload", "pickup": {"isRequested": False}},
+                operation="create_shipment",
+                environment=DHLEnvironment.PRODUCTION,
+            )
+            with self.assertRaisesRegex(ValueError, "single DHL_PRODUCTION"):
+                client.create_shipment(blocked, approval_for(blocked))
 
 
 if __name__ == "__main__":

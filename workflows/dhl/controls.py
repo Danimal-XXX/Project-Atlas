@@ -4,17 +4,15 @@ from __future__ import annotations
 
 import hashlib
 import json
-import sqlite3
 from collections.abc import Mapping
-from contextlib import closing
 from datetime import datetime, timezone
-from pathlib import Path
 from threading import Lock
 from typing import Protocol
 from typing import Any, Callable
 
 from atlas.schema_validator import AtlasSchemaValidator
 from workflows.dhl.config import DHLEnvironment
+from workflows.dhl.ledger import DHLLedgerError, SQLiteApprovalLedger
 
 
 class ApprovalRejected(RuntimeError):
@@ -69,82 +67,6 @@ class MemoryApprovalLedger:
             self._payloads.add(payload_key)
 
 
-class SQLiteApprovalLedger:
-    """Durable, concurrency-safe ledger containing hashes but no shipment PII."""
-
-    def __init__(self, path: str | Path) -> None:
-        self.path = Path(path)
-        if self.path.exists() and self.path.is_dir():
-            raise ValueError("Approval ledger path must be a file")
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._initialise()
-
-    def _connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.path, timeout=30)
-        connection.execute("PRAGMA busy_timeout = 30000")
-        return connection
-
-    def _initialise(self) -> None:
-        with closing(self._connect()) as connection:
-            with connection:
-                connection.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS consumed_approvals (
-                        approval_id TEXT PRIMARY KEY,
-                        operation TEXT NOT NULL,
-                        environment TEXT NOT NULL,
-                        payload_sha256 TEXT NOT NULL,
-                        approved_by TEXT NOT NULL,
-                        consumed_at TEXT NOT NULL,
-                        UNIQUE (operation, environment, payload_sha256)
-                    )
-                    """
-                )
-
-    def consume(
-        self,
-        *,
-        approval_id: str,
-        operation: str,
-        environment: str,
-        payload_sha256: str,
-        approved_by: str,
-        consumed_at: datetime,
-    ) -> None:
-        try:
-            with closing(self._connect()) as connection:
-                with connection:
-                    connection.execute(
-                        """
-                        INSERT INTO consumed_approvals (
-                            approval_id, operation, environment, payload_sha256,
-                            approved_by, consumed_at
-                        ) VALUES (?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            approval_id,
-                            operation,
-                            environment,
-                            payload_sha256,
-                            approved_by,
-                            consumed_at.isoformat(),
-                        ),
-                    )
-        except sqlite3.IntegrityError as error:
-            with closing(self._connect()) as connection:
-                approval_exists = connection.execute(
-                    "SELECT 1 FROM consumed_approvals WHERE approval_id = ?",
-                    (approval_id,),
-                ).fetchone()
-            if approval_exists:
-                raise ApprovalRejected(
-                    f"Approval {approval_id!r} has already been consumed"
-                ) from error
-            raise ApprovalRejected(
-                "This exact DHL operation payload has already been submitted"
-            ) from error
-
-
 def payload_sha256(payload: Mapping[str, Any]) -> str:
     """Return a deterministic hash of the exact controlled-operation envelope."""
     try:
@@ -178,6 +100,10 @@ class ApprovalGuard:
         self.clock = clock or (lambda: datetime.now(timezone.utc))
         self.ledger = ledger or MemoryApprovalLedger()
 
+    @property
+    def is_durable(self) -> bool:
+        return isinstance(self.ledger, SQLiteApprovalLedger)
+
     def authorise(
         self,
         *,
@@ -185,7 +111,7 @@ class ApprovalGuard:
         operation: str,
         environment: DHLEnvironment,
         payload: Mapping[str, Any],
-    ) -> None:
+    ) -> str:
         """Validate exact operation, environment, payload, approver, and expiry."""
         self.validator.validate_object(approval, "shipment-approval.schema.json")
         approval_id = str(approval["id"])
@@ -206,14 +132,18 @@ class ApprovalGuard:
             raise ApprovalRejected("Approval timestamp is in the future")
         if expires_at <= approved_at or expires_at <= now:
             raise ApprovalRejected("Approval has expired or has an invalid expiry")
-        self.ledger.consume(
-            approval_id=approval_id,
-            operation=operation,
-            environment=environment.value,
-            payload_sha256=str(approval["payload_sha256"]),
-            approved_by=str(approval["approved_by"]),
-            consumed_at=now,
-        )
+        try:
+            self.ledger.consume(
+                approval_id=approval_id,
+                operation=operation,
+                environment=environment.value,
+                payload_sha256=str(approval["payload_sha256"]),
+                approved_by=str(approval["approved_by"]),
+                consumed_at=now,
+            )
+        except DHLLedgerError as error:
+            raise ApprovalRejected(str(error)) from error
+        return approval_id
 
 
 def _parse_datetime(value: str) -> datetime:

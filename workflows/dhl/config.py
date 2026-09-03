@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -34,6 +35,8 @@ class DHLConfig:
     environment: DHLEnvironment = DHLEnvironment.TEST
     production_enabled: bool = False
     approver_id: str | None = None
+    approval_ledger_path: Path | None = None
+    allowed_production_draft_id: str | None = None
     timeout: float = 45.0
     max_read_retries: int = 3
 
@@ -57,10 +60,18 @@ class DHLConfig:
             raise DHLConfigurationError(
                 "DHL_APPROVER_ID is required for production"
             )
-        raise DHLConfigurationError(
-            "DHL production remains structurally disabled until the durable "
-            "approval ledger and production-readiness review are complete"
-        )
+        if self.approval_ledger_path is None:
+            raise DHLConfigurationError(
+                "DHL_APPROVAL_LEDGER_PATH is required for production"
+            )
+        if str(self.approval_ledger_path) == ":memory:":
+            raise DHLConfigurationError(
+                "DHL production requires a persistent approval ledger"
+            )
+        if not self.allowed_production_draft_id:
+            raise DHLConfigurationError(
+                "DHL_PRODUCTION_ALLOWED_DRAFT_ID is required for production"
+            )
 
     @classmethod
     def from_env(cls) -> "DHLConfig":
@@ -93,6 +104,14 @@ class DHLConfig:
             environment=environment,
             production_enabled=production_enabled,
             approver_id=os.getenv("DHL_APPROVER_ID") or None,
+            approval_ledger_path=(
+                Path(os.environ["DHL_APPROVAL_LEDGER_PATH"]).expanduser()
+                if os.getenv("DHL_APPROVAL_LEDGER_PATH")
+                else None
+            ),
+            allowed_production_draft_id=(
+                os.getenv("DHL_PRODUCTION_ALLOWED_DRAFT_ID") or None
+            ),
         )
         config.assert_environment_safe()
         return config

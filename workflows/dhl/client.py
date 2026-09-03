@@ -12,6 +12,7 @@ from requests.auth import HTTPBasicAuth
 
 from workflows.dhl.config import DHLConfig, DHLEnvironment
 from workflows.dhl.controls import ApprovalGuard
+from workflows.dhl.ledger import SubmissionAlreadyRecorded
 from workflows.dhl.workflow import PreparedOperation
 
 
@@ -31,6 +32,21 @@ class MyDHLClient:
         sleeper: Callable[[float], None] = time.sleep,
     ) -> None:
         config.assert_environment_safe()
+        if config.environment is DHLEnvironment.PRODUCTION:
+            if not approval_guard.is_durable:
+                raise ValueError("DHL production requires a durable approval guard")
+            if approval_guard.expected_approver != config.approver_id:
+                raise ValueError(
+                    "Approval guard approver does not match DHL_APPROVER_ID"
+                )
+            assert approval_guard.ledger is not None
+            expected_path = config.approval_ledger_path
+            if expected_path is None or (
+                approval_guard.ledger.path != expected_path.expanduser().resolve()
+            ):
+                raise ValueError(
+                    "Approval guard ledger does not match DHL_APPROVAL_LEDGER_PATH"
+                )
         self.config = config
         self.approval_guard = approval_guard
         self.session = session or requests.Session()
@@ -64,10 +80,9 @@ class MyDHLClient:
         )
 
     def validate_shipment(self, prepared: PreparedOperation) -> dict[str, Any]:
-        """Validate a complete test payload without creating a shipment or label."""
-        if self.config.environment is not DHLEnvironment.TEST:
-            raise ValueError("Shipment preflight is restricted to the DHL test environment")
+        """Validate a complete payload without creating a shipment or label."""
         self._assert_prepared(prepared, "create_shipment", "/shipments")
+        self._assert_production_draft_lock(prepared)
         self._assert_pickup_disabled(prepared)
         return self._json(
             "POST",
@@ -113,20 +128,63 @@ class MyDHLClient:
     ) -> dict[str, Any]:
         self.config.assert_environment_safe()
         self._assert_prepared(prepared, expected_operation, path)
+        self._assert_production_draft_lock(prepared)
         if expected_operation == "create_shipment":
             self._assert_pickup_disabled(prepared)
-        self.approval_guard.authorise(
+        approval_id = self.approval_guard.authorise(
             approval=approval,
             operation=expected_operation,
             environment=self.config.environment,
             payload=prepared.envelope,
         )
-        return self._json(
-            "POST",
-            path,
-            retryable=False,
-            json=dict(prepared.dhl_payload),
+        ledger = (
+            self.approval_guard.ledger
+            if self.approval_guard.is_durable
+            else None
         )
+        now = self.approval_guard.clock()
+        if ledger is not None:
+            try:
+                ledger.begin_submission(
+                    approval_id=approval_id,
+                    operation=expected_operation,
+                    environment=self.config.environment.value,
+                    payload_sha256=prepared.payload_sha256,
+                    started_at=now,
+                )
+            except SubmissionAlreadyRecorded as error:
+                raise MyDHLAPIError(str(error)) from error
+        try:
+            result = self._json(
+                "POST",
+                path,
+                retryable=False,
+                json=dict(prepared.dhl_payload),
+            )
+        except Exception as error:
+            if ledger is not None:
+                ledger.mark_outcome_unknown(
+                    operation=expected_operation,
+                    environment=self.config.environment.value,
+                    payload_sha256=prepared.payload_sha256,
+                    error_summary=self._redact(f"{type(error).__name__}: {error}"),
+                    occurred_at=self.approval_guard.clock(),
+                )
+            raise
+        if ledger is not None:
+            carrier_reference = result.get("shipmentTrackingNumber") or result.get(
+                "dispatchConfirmationNumber"
+            )
+            ledger.complete_submission(
+                operation=expected_operation,
+                environment=self.config.environment.value,
+                payload_sha256=prepared.payload_sha256,
+                carrier_reference=(
+                    str(carrier_reference) if carrier_reference is not None else None
+                ),
+                completed_at=self.approval_guard.clock(),
+            )
+        return result
 
     def _assert_prepared(
         self, prepared: PreparedOperation, expected_operation: str, path: str
@@ -137,6 +195,15 @@ class MyDHLClient:
             )
         if prepared.environment is not self.config.environment:
             raise ValueError("Prepared operation environment does not match DHL client")
+
+    def _assert_production_draft_lock(self, prepared: PreparedOperation) -> None:
+        if self.config.environment is not DHLEnvironment.PRODUCTION:
+            return
+        draft_id = str(prepared.draft.get("id", ""))
+        if draft_id != self.config.allowed_production_draft_id:
+            raise ValueError(
+                "Production draft is not the single DHL_PRODUCTION_ALLOWED_DRAFT_ID"
+            )
 
     @staticmethod
     def _assert_pickup_disabled(prepared: PreparedOperation) -> None:
