@@ -212,10 +212,14 @@ DHL_PRODUCTION_ALLOWED_DRAFT_ID=
 ```
 
 `DHL_ENABLE_PRODUCTION=false` is the immediate kill switch. For a controlled
-production preflight, set the environment to `production`, enable production,
-and set `DHL_PRODUCTION_ALLOWED_DRAFT_ID` to the exact reviewed draft ID. Atlas
-will reject every other draft before network contact. Keep the allowed ID blank
-whenever no production operation is actively being reviewed.
+production preflight, set the environment to `production` and set
+`DHL_PRODUCTION_ALLOWED_DRAFT_ID` to the exact reviewed draft ID while leaving
+production disabled. Read-only connectivity checks and
+`validateDataOnly=true` remain available, but shipment and pickup creation stay
+blocked. Enable production only after the frozen production payload receives an
+explicit approval. Atlas will reject every other draft before network contact.
+Return the enable switch to `false` and clear the allowed ID after the supervised
+operation.
 
 Do not send the credentials in email, chat, screenshots, fixtures or issue
 comments. The approved test credentials are viewed under the developer portal's

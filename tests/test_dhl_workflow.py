@@ -1177,6 +1177,44 @@ class MyDHLClientTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "single DHL_PRODUCTION"):
                 client.create_shipment(blocked, approval_for(blocked))
 
+    def test_production_validation_allowed_while_kill_switch_blocks_write(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "ledger.sqlite3"
+            config = DHLConfig(
+                username="production-user",
+                password="production-password",
+                account_number="production-account",
+                environment=DHLEnvironment.PRODUCTION,
+                production_enabled=False,
+                approver_id="dan.walker",
+                approval_ledger_path=ledger_path,
+                allowed_production_draft_id="rma-12895",
+            )
+            session = FakeSession([FakeResponse({"status": "200"})])
+            client = MyDHLClient(
+                config,
+                approval_guard=ApprovalGuard(
+                    expected_approver="dan.walker",
+                    clock=lambda: NOW + timedelta(minutes=1),
+                    ledger=SQLiteApprovalLedger(ledger_path),
+                ),
+                session=session,
+                sleeper=lambda _: None,
+            )
+            prepared = ShipmentWorkflow().prepare(
+                draft=valid_draft(),
+                dhl_payload={"shipment": "payload", "pickup": {"isRequested": False}},
+                operation="create_shipment",
+                environment=DHLEnvironment.PRODUCTION,
+            )
+
+            client.validate_shipment(prepared)
+            with self.assertRaisesRegex(DHLConfigurationError, "production is disabled"):
+                client.create_shipment(prepared, approval_for(prepared))
+
+            self.assertEqual(len(session.calls), 1)
+            self.assertEqual(session.calls[0]["params"], {"validateDataOnly": "true"})
+
 
 if __name__ == "__main__":
     unittest.main()

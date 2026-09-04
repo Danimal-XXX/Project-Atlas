@@ -31,7 +31,6 @@ class MyDHLClient:
         session: requests.Session | None = None,
         sleeper: Callable[[float], None] = time.sleep,
     ) -> None:
-        config.assert_environment_safe()
         if config.environment is DHLEnvironment.PRODUCTION:
             if not approval_guard.is_durable:
                 raise ValueError("DHL production requires a durable approval guard")

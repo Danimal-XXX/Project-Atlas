@@ -113,5 +113,4 @@ class DHLConfig:
                 os.getenv("DHL_PRODUCTION_ALLOWED_DRAFT_ID") or None
             ),
         )
-        config.assert_environment_safe()
         return config
